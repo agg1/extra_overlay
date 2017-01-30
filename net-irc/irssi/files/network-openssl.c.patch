@@ -1,0 +1,215 @@
+--- irssi-0.8.19-orig/src/core/network-openssl.c	2016-03-22 23:08:35.000000000 +0000
++++ irssi-0.8.19/src/core/network-openssl.c	2016-12-02 22:03:08.649416888 +0000
+@@ -25,7 +25,11 @@
+ 
+ #ifdef HAVE_OPENSSL
+ 
++#include <openssl/asn1.h>
++#include <openssl/bio.h>
+ #include <openssl/crypto.h>
++#include <openssl/pkcs12.h>
++#include <openssl/safestack.h>
+ #include <openssl/x509.h>
+ #include <openssl/x509v3.h>
+ #include <openssl/pem.h>
+@@ -48,10 +52,41 @@
+ 	unsigned int verify:1;
+ 	SERVER_REC *server;
+ 	int port;
++	char *CAfile;
+ } GIOSSLChannel;
+ 
+ static int ssl_inited = FALSE;
+ 
++#define FORMAT_UNDEF    0
++#define FORMAT_ASN1     1
++#define FORMAT_TEXT     2
++#define FORMAT_PEM      3
++#define FORMAT_NETSCAPE 4
++#define FORMAT_PKCS12   5
++#define FORMAT_SMIME    6
++
++#define FORMAT_IISSGC	8	/* XXX this stupid macro helps us to avoid
++				 * adding yet another param to load_*key() */
++#define FORMAT_PEMRSA	9	/* PEM RSAPubicKey format */
++#define FORMAT_ASN1RSA	10	/* DER RSAPubicKey format */
++#define FORMAT_MSBLOB	11	/* MS Key blob format */
++#define FORMAT_PVK	12	/* MS PVK file format */
++
++#define EXT_COPY_NONE	0
++#define EXT_COPY_ADD	1
++#define EXT_COPY_ALL	2
++
++#define NETSCAPE_CERT_HDR	"certificate"
++
++#define APP_PASS_LEN	1024
++
++#define SERIAL_RAND_BITS	64
++
++typedef struct pw_cb_data {
++	const void *password;
++	const char *prompt_info;
++} PW_CB_DATA;
++
+ static void irssi_ssl_free(GIOChannel *handle)
+ {
+ 	GIOSSLChannel *chan = (GIOSSLChannel *)handle;
+@@ -555,6 +590,7 @@
+ 	chan->server = server;
+ 	chan->port = port;
+ 	chan->verify = verify;
++	chan->CAfile = cafile;
+ 
+ 	gchan = (GIOChannel *)chan;
+ 	gchan->funcs = &irssi_ssl_channel_funcs;
+@@ -578,6 +614,112 @@
+ 	return ssl_handle;
+ }
+ 
++static int
++load_pkcs12(BIO *err, BIO *in, const char *desc, pem_password_cb *pem_cb,
++    void *cb_data, EVP_PKEY **pkey, X509 **cert, STACK_OF(X509) **ca)
++{
++	const char *pass;
++	char tpass[PEM_BUFSIZE];
++	int len, ret = 0;
++	PKCS12 *p12;
++
++	p12 = d2i_PKCS12_bio(in, NULL);
++	if (p12 == NULL) {
++		BIO_printf(err, "Error loading PKCS12 file for %s\n", desc);
++		goto die;
++	}
++	/* See if an empty password will do */
++	if (PKCS12_verify_mac(p12, "", 0) || PKCS12_verify_mac(p12, NULL, 0))
++		pass = "";
++	else {
++		if (!pem_cb)
++			pem_cb = NULL;
++		len = pem_cb(tpass, PEM_BUFSIZE, 0, cb_data);
++		if (len < 0) {
++			BIO_printf(err, "Passpharse callback error for %s\n",
++			    desc);
++			goto die;
++		}
++		if (len < PEM_BUFSIZE)
++			tpass[len] = 0;
++		if (!PKCS12_verify_mac(p12, tpass, len)) {
++			BIO_printf(err,
++			    "Mac verify error (wrong password?) in PKCS12 file for %s\n", desc);
++			goto die;
++		}
++		pass = tpass;
++	}
++	ret = PKCS12_parse(p12, pass, pkey, cert, ca);
++
++die:
++	if (p12)
++		PKCS12_free(p12);
++	return ret;
++}
++
++X509 *
++load_cert(BIO *err, const char *file, int format, const char *pass,
++    const char *cert_descrip)
++{
++	X509 *x = NULL;
++	BIO *cert;
++
++	if ((cert = BIO_new(BIO_s_file())) == NULL) {
++		ERR_print_errors(err);
++		goto end;
++	}
++	if (file == NULL) {
++		setvbuf(stdin, NULL, _IONBF, 0);
++		BIO_set_fp(cert, stdin, BIO_NOCLOSE);
++	} else {
++		if (BIO_read_filename(cert, file) <= 0) {
++			BIO_printf(err, "Error opening %s %s\n",
++			    cert_descrip, file);
++			ERR_print_errors(err);
++			goto end;
++		}
++	}
++
++	if (format == FORMAT_ASN1)
++		x = d2i_X509_bio(cert, NULL);
++	else if (format == FORMAT_NETSCAPE) {
++		NETSCAPE_X509 *nx;
++		nx = ASN1_item_d2i_bio(ASN1_ITEM_rptr(NETSCAPE_X509),
++		    cert, NULL);
++		if (nx == NULL)
++			goto end;
++
++		if ((strncmp(NETSCAPE_CERT_HDR, (char *) nx->header->data,
++		    nx->header->length) != 0)) {
++			NETSCAPE_X509_free(nx);
++			BIO_printf(err,
++			    "Error reading header on certificate\n");
++			goto end;
++		}
++		x = nx->cert;
++		nx->cert = NULL;
++		NETSCAPE_X509_free(nx);
++	} else if (format == FORMAT_PEM)
++		x = PEM_read_bio_X509_AUX(cert, NULL, NULL, NULL);
++	else if (format == FORMAT_PKCS12) {
++		if (!load_pkcs12(err, cert, cert_descrip, NULL, NULL,
++		    NULL, &x, NULL))
++			goto end;
++	} else {
++		BIO_printf(err, "bad input format specified for %s\n",
++		    cert_descrip);
++		goto end;
++	}
++
++end:
++	if (x == NULL) {
++		BIO_printf(err, "unable to load certificate\n");
++		ERR_print_errors(err);
++	}
++	BIO_free(cert);
++	return (x);
++}
++
+ int irssi_ssl_handshake(GIOChannel *handle)
+ {
+ 	GIOSSLChannel *chan = (GIOSSLChannel *)handle;
+@@ -615,8 +757,37 @@
+ 		g_warning("SSL server supplied no certificate");
+ 		return -1;
+ 	}
++	g_warning("trying to verify certificate...");
+ 	ret = !chan->verify || irssi_ssl_verify(chan->ssl, chan->ctx, chan->server->connrec->address, chan->port, cert, chan->server);
++
++	BIO *bio_err=NULL;
++	char *CAfile = chan->CAfile;
++
++	// special validation check if CAfile signature and cert signature are identical
++	if (ret != TRUE && CAfile && *CAfile)
++	{
++		if (bio_err == NULL)
++			bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
++
++        g_warning("trying special validation with CAfile set for certificate\n");
++		X509 *cacert = load_cert(bio_err, CAfile, FORMAT_PEM, NULL, "ca cert file");
++		// if so with CAfile explicitely set to compare cert against it is considered trusted by myself
++		if (cert != NULL && cacert !=NULL)
++		{
++            ret = strncmp(cert->signature->data, cacert->signature->data, cert->signature->length);
++            if (ret != 0)
++            {
++                g_warning("special certificate validation FAILED\n"); ret = FALSE;
++            }
++            else
++            {
++                g_warning("special certificate validation OK!\n"); ret = TRUE;
++            }
++		}
++	}
++
+ 	X509_free(cert);
++
+ 	return ret ? 0 : -1;
+ }
+ 

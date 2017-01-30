@@ -1,0 +1,24 @@
+diff -Naur ircd-hybrid-7.2.3.orig/src/rsa.c ircd-hybrid-7.2.3/src/rsa.c
+--- ircd-hybrid-7.2.3.orig/src/rsa.c	2007-02-28 04:17:46.000000000 +0000
++++ ircd-hybrid-7.2.3/src/rsa.c	2016-12-15 06:43:35.194050022 +0000
+@@ -186,13 +186,13 @@
+ int
+ get_randomness(unsigned char *buf, int length)
+ {
+-    /* Seed OpenSSL PRNG with EGD enthropy pool -kre */
+-    if (ConfigFileEntry.use_egd &&
+-        (ConfigFileEntry.egdpool_path != NULL))
+-    {
+-      if (RAND_egd(ConfigFileEntry.egdpool_path) == -1)
+-            return -1;
+-    }
++//    /* Seed OpenSSL PRNG with EGD enthropy pool -kre */
++//    if (ConfigFileEntry.use_egd &&
++//        (ConfigFileEntry.egdpool_path != NULL))
++//    {
++//      if (RAND_egd(ConfigFileEntry.egdpool_path) == -1)
++//            return -1;
++//    }
+ 
+   if (RAND_status())
+     return (RAND_bytes(buf, length));

@@ -1,0 +1,105 @@
+diff -Naur openssh-7.2p2.orig/readconf.c openssh-7.2p2/readconf.c
+--- openssh-7.2p2.orig/readconf.c	2016-03-09 18:04:48.000000000 +0000
++++ openssh-7.2p2/readconf.c	2016-12-26 19:55:23.632513688 +0000
+@@ -144,7 +144,7 @@
+ 	oPubkeyAuthentication,
+ 	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
+ 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
+-	oHostKeyAlgorithms, oBindAddress, oPKCS11Provider,
++	oHostKeyAlgorithms, oBindAddress, oBindPort, oPKCS11Provider,
+ 	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
+ 	oEnableSSHKeysign, oRekeyLimit, oVerifyHostKeyDNS, oConnectTimeout,
+ 	oAddressFamily, oGssAuthentication, oGssDelegateCreds,
+@@ -237,6 +237,7 @@
+ 	{ "preferredauthentications", oPreferredAuthentications },
+ 	{ "hostkeyalgorithms", oHostKeyAlgorithms },
+ 	{ "bindaddress", oBindAddress },
++	{ "bindport", oBindPort },
+ #ifdef ENABLE_PKCS11
+ 	{ "smartcarddevice", oPKCS11Provider },
+ 	{ "pkcs11provider", oPKCS11Provider },
+@@ -1080,6 +1081,10 @@
+ 		charptr = &options->bind_address;
+ 		goto parse_string;
+ 
++	case oBindPort:
++		charptr = &options->bind_port;
++		goto parse_string;
++
+ 	case oPKCS11Provider:
+ 		charptr = &options->pkcs11_provider;
+ 		goto parse_string;
+@@ -1688,6 +1693,7 @@
+ 	options->log_level = SYSLOG_LEVEL_NOT_SET;
+ 	options->preferred_authentications = NULL;
+ 	options->bind_address = NULL;
++	options->bind_port = NULL;
+ 	options->pkcs11_provider = NULL;
+ 	options->enable_ssh_keysign = - 1;
+ 	options->no_host_authentication_for_localhost = - 1;
+diff -Naur openssh-7.2p2.orig/readconf.h openssh-7.2p2/readconf.h
+--- openssh-7.2p2.orig/readconf.h	2016-03-09 18:04:48.000000000 +0000
++++ openssh-7.2p2/readconf.h	2016-12-26 19:55:23.632513688 +0000
+@@ -87,6 +87,7 @@
+ 	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+ 	char   *preferred_authentications;
+ 	char   *bind_address;	/* local socket address for connection to sshd */
++	char   *bind_port;
+ 	char   *pkcs11_provider; /* PKCS#11 provider */
+ 	int	verify_host_key_dns;	/* Verify host key using DNS */
+ 
+diff -Naur openssh-7.2p2.orig/ssh.c openssh-7.2p2/ssh.c
+--- openssh-7.2p2.orig/ssh.c	2016-03-09 18:04:48.000000000 +0000
++++ openssh-7.2p2/ssh.c	2016-12-26 20:03:49.164527226 +0000
+@@ -200,7 +200,7 @@
+ usage(void)
+ {
+ 	fprintf(stderr,
+-"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-B bind_port ] [-c cipher_spec]\n"
+ "           [-D [bind_address:]port] [-E log_file] [-e escape_char]\n"
+ "           [-F configfile] [-I pkcs11] [-i identity_file] [-L address]\n"
+ "           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]\n"
+@@ -606,7 +606,7 @@
+ 
+  again:
+ 	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
+-	    "ACD:E:F:GI:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
++	    "AB:CD:E:F:GI:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
+ 		switch (opt) {
+ 		case '1':
+ 			options.protocol = SSH_PROTO_1;
+@@ -920,6 +920,9 @@
+ 		case 'F':
+ 			config = optarg;
+ 			break;
++		case 'B':
++			options.bind_port = optarg;
++			break;
+ 		default:
+ 			usage();
+ 		}
+diff -Naur openssh-7.2p2.orig/sshconnect.c openssh-7.2p2/sshconnect.c
+--- openssh-7.2p2.orig/sshconnect.c	2016-03-09 18:04:48.000000000 +0000
++++ openssh-7.2p2/sshconnect.c	2016-12-26 20:07:46.008533568 +0000
+@@ -284,7 +284,7 @@
+ 	fcntl(sock, F_SETFD, FD_CLOEXEC);
+ 
+ 	/* Bind the socket to an alternative local IP address */
+-	if (options.bind_address == NULL && !privileged)
++	if (options.bind_address == NULL && options.bind_port == NULL) // && !privileged
+ 		return sock;
+ 
+ 	if (options.bind_address) {
+@@ -293,7 +293,10 @@
+ 		hints.ai_socktype = ai->ai_socktype;
+ 		hints.ai_protocol = ai->ai_protocol;
+ 		hints.ai_flags = AI_PASSIVE;
+-		gaierr = getaddrinfo(options.bind_address, NULL, &hints, &res);
++		if (options.bind_port == NULL)
++			gaierr = getaddrinfo(options.bind_address, NULL, &hints, &res);
++		else
++			gaierr = getaddrinfo(options.bind_address, options.bind_port, &hints, &res);
+ 		if (gaierr) {
+ 			error("getaddrinfo: %s: %s", options.bind_address,
+ 			    ssh_gai_strerror(gaierr));

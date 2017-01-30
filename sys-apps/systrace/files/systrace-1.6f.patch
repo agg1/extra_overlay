@@ -1,0 +1,122 @@
+diff --git a/Makefile.am b/Makefile.am
+index 547938a..76c6c6a 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS = foreign no-dependencies
+ 
+-SUBDIRS = . regress
++SUBDIRS = . 
+ 
+ DISTCLEANFILES = *~
+ 
+@@ -28,11 +28,5 @@ EXTRA_DIST = $(man_MANS) README openbsd-syscalls.c register-openbsd.c \
+ 	lex.c parse.c err.h filter.h intercept.h linux_fcntl.h linux_types.h \
+ 	parse.h systrace-errno.h systrace.h util.h linux_syscalls.c \
+ 	linux-translate.c linux-translate.h \
+-	linux_socket.h linux_socketcall.h getopt.c setproctitle.c \
+-	regress/arch.policy.OpenBSD regress/nm.policy.Linux \
+-	regress/uniq.policy.Linux regress/nm.policy.Linux64 \
+-	regress/uniq.policy.Linux64 regress/id.policy.NetBSD \
+-	regress/nm.policy.OpenBSD regress/uniq.policy.OpenBSD \
+-	regress/id.policy.OpenBSD regress/regress.sh  regress/nm.args \
+-	regress/uniq.args
++	linux_socket.h linux_socketcall.h getopt.c setproctitle.c
+ 
+diff --git a/Makefile.in b/Makefile.in
+index cf1c981..1b96b2f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -218,7 +218,7 @@ target_vendor = @target_vendor@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = foreign no-dependencies
+-SUBDIRS = . regress
++SUBDIRS = . 
+ DISTCLEANFILES = *~
+ systrace_SOURCES = filter.c intercept-translate.c intercept.c \
+ 		util.c policy.c systrace-errno.h systrace-error.c \
+@@ -236,13 +236,7 @@ EXTRA_DIST = $(man_MANS) README openbsd-syscalls.c register-openbsd.c \
+ 	lex.c parse.c err.h filter.h intercept.h linux_fcntl.h linux_types.h \
+ 	parse.h systrace-errno.h systrace.h util.h linux_syscalls.c \
+ 	linux-translate.c linux-translate.h \
+-	linux_socket.h linux_socketcall.h getopt.c setproctitle.c \
+-	regress/arch.policy.OpenBSD regress/nm.policy.Linux \
+-	regress/uniq.policy.Linux regress/nm.policy.Linux64 \
+-	regress/uniq.policy.Linux64 regress/id.policy.NetBSD \
+-	regress/nm.policy.OpenBSD regress/uniq.policy.OpenBSD \
+-	regress/id.policy.OpenBSD regress/regress.sh  regress/nm.args \
+-	regress/uniq.args
++	linux_socket.h linux_socketcall.h getopt.c setproctitle.c
+ 
+ all: config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+diff --git a/config.h.in b/config.h.in
+index 34e86bb..6b65e5b 100644
+--- a/config.h.in
++++ b/config.h.in
+@@ -5,7 +5,7 @@
+ #undef u_int64_t
+ #undef u_int8_t
+ 
+-#undef in_addr_t
++//#undef in_addr_t
+ 
+ 
+ /* Define to 1 if you have the <asm/user.h> header file. */
+@@ -31,6 +31,7 @@
+ 
+ /* Define to 1 if you have the <linux/sched.h> header file. */
+ #undef HAVE_LINUX_SCHED_H
++#define HAVE_LINUX_SCHED_H 1
+ 
+ /* Define to 1 if you have the <linux/systrace.h> header file. */
+ #undef HAVE_LINUX_SYSTRACE_H
+@@ -55,6 +56,7 @@
+ 
+ /* Define to 1 if you have the <sched.h> header file. */
+ #undef HAVE_SCHED_H
++#define HAVE_SCHED_H 0
+ 
+ /* Define to 1 if you have the `select' function. */
+ #undef HAVE_SELECT
+@@ -141,7 +143,8 @@
+ #undef PTRACE_LINUX32
+ 
+ /* Define if we are compiling against ptrace on a 64-bit system */
+-#undef PTRACE_LINUX64
++//#undef PTRACE_LINUX64
++#define PTRACE_LINUX64 1
+ 
+ /* Define as the return type of signal handlers (`int' or `void'). */
+ #undef RETSIGTYPE
+@@ -163,7 +166,7 @@
+ #undef const
+ 
+ /* Define to `unsigned long' if <sys/types.h> does not define. */
+-#undef in_addr_t
++//#undef in_addr_t
+ 
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef pid_t
+diff --git a/linux-ptrace-syscalls.c b/linux-ptrace-syscalls.c
+index 9b53f4c..1b943ee 100644
+--- a/linux-ptrace-syscalls.c
++++ b/linux-ptrace-syscalls.c
+@@ -72,12 +72,12 @@ typedef u_int32_t u32;
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdio.h>
++#ifdef HAVE_LINUX_SCHED_H
++#include <linux/sched.h>
++#else
+ #ifdef HAVE_SCHED_H
+ #include <sched.h>
+-#else
+-#ifdef    HAVE_LINUX_SCHED_H
+-#include <linux/sched.h>
+-#endif    /* HAVE_LINUX_SCHED_H */
++#endif
+ #endif
+ 
+ #include <event.h>

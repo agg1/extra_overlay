@@ -1,0 +1,14 @@
+diff -Naur yate.orig/modules/h323chan.cpp yate/modules/h323chan.cpp
+--- yate.orig/modules/h323chan.cpp	2014-02-05 10:49:54.000000000 +0000
++++ yate/modules/h323chan.cpp	2016-12-19 07:42:53.586163234 +0000
+@@ -3391,8 +3391,8 @@
+ 	dbg = 0;
+     if (dbg > 10)
+ 	dbg = 10;
+-    PTrace::Initialise(dbg,0,PTrace::Blocks | PTrace::Timestamp
+-	| PTrace::Thread | PTrace::FileAndLine);
++//    PTrace::Initialise(dbg,0,PTrace::Blocks | PTrace::Timestamp
++//	| PTrace::Thread | PTrace::FileAndLine);
+     initEndpoint(String::empty(),s_cfg.getSection("ep"),true);
+     int n = s_cfg.sections();
+     for (int i = 0; i < n; i++) {
