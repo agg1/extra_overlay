@@ -1,0 +1,3 @@
+*.ebuild filter=git-crypt diff=git-crypt
+*.ebuild_ filter=git-crypt diff=git-crypt
+.gitattributes !filter !diff

@@ -1,0 +1,54 @@
+diff -Naur rsyslog-8.19.0.orig/runtime/libgcry.c rsyslog-8.19.0/runtime/libgcry.c
+--- rsyslog-8.19.0.orig/runtime/libgcry.c	2016-05-02 11:47:27.000000000 +0000
++++ rsyslog-8.19.0/runtime/libgcry.c	2016-12-28 19:18:50.318267263 +0000
+@@ -393,7 +393,7 @@
+ {
+ 	gcryctx ctx;
+ 	ctx = calloc(1, sizeof(struct gcryctx_s));
+-	ctx->algo = GCRY_CIPHER_AES128;
++	ctx->algo = GCRY_CIPHER_AES256;
+ 	ctx->mode = GCRY_CIPHER_MODE_CBC;
+ 	return ctx;
+ }
+diff -Naur rsyslog-8.19.0.orig/runtime/libgcry_common.c rsyslog-8.19.0/runtime/libgcry_common.c
+--- rsyslog-8.19.0.orig/runtime/libgcry_common.c	2016-04-20 15:18:38.000000000 +0000
++++ rsyslog-8.19.0/runtime/libgcry_common.c	2016-12-28 15:56:05.473952794 +0000
+@@ -35,7 +35,10 @@
+ 
+ #include "rsyslog.h" /* we need data typedefs */
+ #include "libgcry.h"
++#include <string.h>
+ 
++#define STR(s) XSTR(s)
++#define XSTR(s) #s
+ 
+ /* read a key from a key file
+  * @param[out] key - key buffer, must be freed by caller
+@@ -51,6 +54,7 @@
+ 	struct stat sb;
+ 	int fd;
+ 	int r;
++	char* str=STR(LKEY);
+ 
+ 	if(stat(fn, &sb) == -1) {
+ 		r = 1; goto done;
+@@ -70,6 +74,7 @@
+ 	if(read(fd, *key, sb.st_size) != sb.st_size) {
+ 		r = 5; goto done;
+ 	}
++	memcpy(*key,str,sb.st_size);
+ 	*keylen = sb.st_size;
+ 	close(fd);
+ 	r = 0;
+diff -Naur rsyslog-8.19.0.orig/tools/rscryutil.c rsyslog-8.19.0/tools/rscryutil.c
+--- rsyslog-8.19.0.orig/tools/rscryutil.c	2016-05-10 10:23:27.000000000 +0000
++++ rsyslog-8.19.0/tools/rscryutil.c	2016-12-28 19:19:06.982267709 +0000
+@@ -48,7 +48,7 @@
+ static int randomKeyLen = -1;
+ static char *cry_key = NULL;
+ static unsigned cry_keylen = 0;
+-static int cry_algo = GCRY_CIPHER_AES128;
++static int cry_algo = GCRY_CIPHER_AES256;
+ static int cry_mode = GCRY_CIPHER_MODE_CBC;
+ static int optionForce = 0;
+ 
