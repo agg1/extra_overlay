@@ -1,0 +1,296 @@
+*PPD-Adobe: "4.3"
+*FormatVersion:	"4.3"
+*FileVersion:	"1.1"
+*LanguageVersion: English 
+*%*LanguageEncoding: ISOLatin1
+*LanguageEncoding: UTF-8
+*PCFileName:	"MFC7360N.PPD"
+*Manufacturer:	"Brother"
+*Product:	"(Laserjet 600dpi/PCL5/JCL)"
+*cupsVersion:	1.1
+*cupsManualCopies: True
+*cupsModelNumber:  88
+*cupsFilter:	"application/vnd.cups-postscript 100 foomatic-rip"
+*cupsFilter:	"application/vnd.cups-pdf 0 foomatic-rip"
+*ModelName:     "Brother MFC-7360N"
+*NickName:      "Brother MFC-7360N (Laserjet 600dpi/PCL5/JCL)"
+*ShortNickName: "MFC-7360N"
+*PSVersion: "(3010.106) 3"
+*LanguageLevel:	"3"
+*ColorDevice:	False
+*DefaultColorSpace: Gray
+*FileSystem:	False
+*LandscapeOrientation: Plus90
+*TTRasterizer:	Type42
+*1284DeviceID: "MFG:Brother;MDL:MFC-7360N series;CMD:PCL5,PJL,PCLXL;DRV:Dmfc73x0,R1,M0,TG;"
+
+
+*driverName mfc73x0: ""
+*driverType G/Ghostscript built-in: ""
+*driverUrl: "http://www.padwalker.com"
+*driverObsolete: False
+*driverManufacturerSupplied: False
+*Throughput:	"18"
+*FreeVM: "1700000"
+
+
+*FoomaticIDs: Brother-MFC-7360 mfc73x0
+*FoomaticRIPCommandLine: "gs -q -dBATCH -dPARANOIDSAFER -dNOPAUSE -dNO&&
+MEDIAATTRS -dNOINTERPOLATE -sDEVICE=mfc73x0%A%Z -sOutputFile=-%C -f -"
+*End
+
+
+*HWMargins: 0 0 0 0
+*VariablePaperSize: False
+*MaxMediaWidth: 612
+*MaxMediaHeight: 1008
+
+
+
+*OpenGroup: General/General
+
+*OpenUI *PageSize/Page Size: PickOne
+*FoomaticRIPOption PageSize: enum CmdLine A
+*OrderDependency: 100 AnySetup *PageSize
+*DefaultPageSize: A4
+*PageSize A4/A4: "%% FoomaticRIPOptionSetting: PageSize=A4"
+*FoomaticRIPOptionSetting PageSize=A4: " -dDEVICEWIDTHPOINTS=595 -dDEV&&
+ICEHEIGHTPOINTS=842"
+*End
+*PageSize A5/A5: "%% FoomaticRIPOptionSetting: PageSize=A5"
+*FoomaticRIPOptionSetting PageSize=A5: " -dDEVICEWIDTHPOINTS=421 -dDEV&&
+ICEHEIGHTPOINTS=595"
+*End
+*PageSize B5/B5 (JIS): "%% FoomaticRIPOptionSetting: PageSize=B5"
+*FoomaticRIPOptionSetting PageSize=B5: " -dDEVICEWIDTHPOINTS=516 -dDEV&&
+ICEHEIGHTPOINTS=729"
+*End
+*PageSize Env10/Envelope #10: "%% FoomaticRIPOptionSetting: PageSize=Env10"
+*FoomaticRIPOptionSetting PageSize=Env10: " -dDEVICEWIDTHPOINTS=297 -d&&
+DEVICEHEIGHTPOINTS=684"
+*End
+*PageSize EnvC5/Envelope C5: "%% FoomaticRIPOptionSetting: PageSize=EnvC5"
+*FoomaticRIPOptionSetting PageSize=EnvC5: " -dDEVICEWIDTHPOINTS=459 -d&&
+DEVICEHEIGHTPOINTS=649"
+*End
+*PageSize EnvDL/Envelope DL: "%% FoomaticRIPOptionSetting: PageSize=EnvDL"
+*FoomaticRIPOptionSetting PageSize=EnvDL: " -dDEVICEWIDTHPOINTS=312 -d&&
+DEVICEHEIGHTPOINTS=624"
+*End
+*PageSize EnvISOB5/Envelope B5: "%% FoomaticRIPOptionSetting: PageSize=EnvISOB5"
+*FoomaticRIPOptionSetting PageSize=EnvISOB5: " -dDEVICEWIDTHPOINTS=499&&
+ -dDEVICEHEIGHTPOINTS=709"
+*End
+*PageSize EnvMonarch/Envelope Monarch: "%% FoomaticRIPOptionSetting: PageSize=EnvMonarch"
+*FoomaticRIPOptionSetting PageSize=EnvMonarch: " -dDEVICEWIDTHPOINTS=2&&
+79 -dDEVICEHEIGHTPOINTS=540"
+*End
+*PageSize Letter/US Letter: "%% FoomaticRIPOptionSetting: PageSize=Letter"
+*FoomaticRIPOptionSetting PageSize=Letter: " -dDEVICEWIDTHPOINTS=612 -&&
+dDEVICEHEIGHTPOINTS=792"
+*End
+*PageSize Legal/US Legal: "%% FoomaticRIPOptionSetting: PageSize=Legal"
+*FoomaticRIPOptionSetting PageSize=Legal: " -dDEVICEWIDTHPOINTS=612 -d&&
+DEVICEHEIGHTPOINTS=1008"
+*End
+*PageSize Executive/Executive: "%% FoomaticRIPOptionSetting: PageSize=Executive"
+*FoomaticRIPOptionSetting PageSize=Executive: " -dDEVICEWIDTHPOINTS=52&&
+2 -dDEVICEHEIGHTPOINTS=756"
+*End
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 100 AnySetup *PageRegion
+*DefaultPageRegion: A4
+*PageRegion A4/A4: "%% FoomaticRIPOptionSetting: PageSize=A4"
+*PageRegion A5/A5: "%% FoomaticRIPOptionSetting: PageSize=A5"
+*PageRegion B5/B5 (JIS): "%% FoomaticRIPOptionSetting: PageSize=B5"
+*PageRegion Env10/Envelope #10: "%% FoomaticRIPOptionSetting: PageSize=Env10"
+*PageRegion EnvC5/Envelope C5: "%% FoomaticRIPOptionSetting: PageSize=EnvC5"
+*PageRegion EnvDL/Envelope DL: "%% FoomaticRIPOptionSetting: PageSize=EnvDL"
+*PageRegion EnvMonarch/Envelope Monarch: "%% FoomaticRIPOptionSetting: PageSize=EnvMonarch"
+*PageRegion Letter/US Letter: "%% FoomaticRIPOptionSetting: PageSize=Letter"
+*PageRegion Legal/US Legal: "%% FoomaticRIPOptionSetting: PageSize=Legal"
+*PageRegion Executive/Executive: "%% FoomaticRIPOptionSetting: PageSize=Executive"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: A4
+*ImageableArea A4/A4: "12 12 583 830"
+*ImageableArea A5/A5: "12 12 409 583"
+*ImageableArea B5/B5: "12 12 504 717" 
+*ImageableArea Env10/Envelope #10: "12 12 285 672"
+*ImageableArea EnvC5/Envelope C5: "12 12 447 637"
+*ImageableArea EnvDL/Envelope DL: "12 12 300 612"
+*ImageableArea EnvMonarch/Envelope Monarch: "12 12 267 528"
+*ImageableArea EnvISOB5/Envelope B5(ISO): "12 12 487 697"
+*ImageableArea Letter/Letter: "12 12 600 780"
+*ImageableArea Legal/Legal: "12 12 600 996"
+*ImageableArea Executive/Executive: "12 12 510 744"
+
+*%==== Information About Media Sizes ========
+
+*DefaultPaperDimension: A4
+*PaperDimension A4/A4: "595 842"
+*PaperDimension A5/A5: "420 595"
+*PaperDimension B5/B5: "516 729"
+*PaperDimension Env10/Envelope #10: "297 684"
+*PaperDimension EnvC5/Envelope C5: "459 649"
+*PaperDimension EnvDL/Envelope DL: "312 624"
+*PaperDimension EnvMonarch/Envelope Monarch: "279 540"
+*PaperDimension EnvISOB5/Envelope B5(ISO): "499 709"
+*PaperDimension Letter/Letter: "612 792"
+*PaperDimension Legal/Legal: "612 1008"
+*PaperDimension Executive/Executive: "522 756"
+
+*JCLOpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 100 JCLSetup *MediaType
+*DefaultMediaType: Plain
+*MediaType Plain/Plain Paper: "@PJL SET MEDIATYPE=REGULAR<0A>"
+*MediaType Bond/Bond Paper: "@PJL SET MEDIATYPE=BOND<0A>"
+*MediaType Thick/Thick Paper: "@PJL SET MEDIATYPE=THICK<0A>"
+*MediaType Thicker/Thicker Paper: "@PJL SET MEDIATYPE=THICKER<0A>"
+*MediaType Thin/Thin Paper: "@PJL SET MEDIATYPE=THIN<0A>"
+*MediaType Transparencies/Transparent: "@PJL SET MEDIATYPE=TRANS<0A>"
+*JCLCloseUI: *MediaType
+
+*OpenUI *EconoMode/Economy Mode: PickOne
+*FoomaticRIPOption EconoMode: enum CmdLine A
+*OrderDependency: 100 AnySetup *EconoMode
+*DefaultEconoMode: high
+*EconoMode high/High (50%): "%% FoomaticRIPOptionSetting: EconoMode=high"
+*FoomaticRIPOptionSetting EconoMode=high: " -dEconoMode=2"
+*EconoMode low/Low (25%): "%% FoomaticRIPOptionSetting: EconoMode=low"
+*FoomaticRIPOptionSetting EconoMode=low: " -dEconoMode=1"
+*EconoMode off/Off: "%% FoomaticRIPOptionSetting: EconoMode=off"
+*FoomaticRIPOptionSetting EconoMode=off: " -dEconoMode=0"
+*CloseUI: *EconoMode
+
+*OpenUI *InputSlot/Media Source: PickOne
+*FoomaticRIPOption InputSlot: enum CmdLine A
+*OrderDependency: 110 AnySetup *InputSlot
+*DefaultInputSlot: auto
+*InputSlot upper/Upper Tray: "%% FoomaticRIPOptionSetting: InputSlot=upper"
+*FoomaticRIPOptionSetting InputSlot=upper: " -dSourceTray=2"
+*InputSlot lower/Lower Tray: "%% FoomaticRIPOptionSetting: InputSlot=lower"
+*FoomaticRIPOptionSetting InputSlot=lower: " -dSourceTray=3"
+*InputSlot auto/Automatic: "%% FoomaticRIPOptionSetting: InputSlot=auto"
+*FoomaticRIPOptionSetting InputSlot=auto: " -dSourceTray=0"
+*InputSlot dual/Dual: "%% FoomaticRIPOptionSetting: InputSlot=dual"
+*FoomaticRIPOptionSetting InputSlot=dual: " -dSourceTray=1"
+*InputSlot manual/Manual Feeder: "%% FoomaticRIPOptionSetting: InputSlot=manual"
+*FoomaticRIPOptionSetting InputSlot=manual: " -dSourceTray=4"
+*CloseUI: *InputSlot
+
+*OpenUI *Resolution/Resolution: PickOne
+*FoomaticRIPOption Resolution: enum CmdLine A
+*OrderDependency: 110 AnySetup *Resolution
+*DefaultResolution: 600x600dpi
+*Resolution 150x150dpi/150x150 DPI: "%% FoomaticRIPOptionSetting: Resolution=150x150dpi"
+*FoomaticRIPOptionSetting Resolution=150x150dpi: " -r150x150"
+*Resolution 300x300dpi/300x300 DPI: "%% FoomaticRIPOptionSetting: Resolution=300x300dpi"
+*FoomaticRIPOptionSetting Resolution=300x300dpi: " -r300x300"
+*Resolution 600x600dpi/600x600 DPI: "%% FoomaticRIPOptionSetting: Resolution=600x600dpi"
+*FoomaticRIPOptionSetting Resolution=600x600dpi: " -r600x600"
+*CloseUI: *Resolution
+
+*CloseGroup: General
+
+
+
+*% Generic boilerplate PPD stuff as standard PostScript fonts and so on
+*DefaultFont: Courier
+*Font AvantGarde-Book: Standard "(001.006S)" Standard ROM
+*Font AvantGarde-BookOblique: Standard "(001.006S)" Standard ROM
+*Font AvantGarde-Demi: Standard "(001.007S)" Standard ROM
+*Font AvantGarde-DemiOblique: Standard "(001.007S)" Standard ROM
+*Font Bookman-Demi: Standard "(001.004S)" Standard ROM
+*Font Bookman-DemiItalic: Standard "(001.004S)" Standard ROM
+*Font Bookman-Light: Standard "(001.004S)" Standard ROM
+*Font Bookman-LightItalic: Standard "(001.004S)" Standard ROM
+*Font Courier: Standard "(002.004S)" Standard ROM
+*Font Courier-Bold: Standard "(002.004S)" Standard ROM
+*Font Courier-BoldOblique: Standard "(002.004S)" Standard ROM
+*Font Courier-Oblique: Standard "(002.004S)" Standard ROM
+*Font Helvetica: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Bold: Standard "(001.007S)" Standard ROM
+*Font Helvetica-BoldOblique: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Narrow-Bold: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow-Oblique: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Oblique: Standard "(001.006S)" Standard ROM
+*Font NewCenturySchlbk-Bold: Standard "(001.009S)" Standard ROM
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.007S)" Standard ROM
+*Font NewCenturySchlbk-Italic: Standard "(001.006S)" Standard ROM
+*Font NewCenturySchlbk-Roman: Standard "(001.007S)" Standard ROM
+*Font Palatino-Bold: Standard "(001.005S)" Standard ROM
+*Font Palatino-BoldItalic: Standard "(001.005S)" Standard ROM
+*Font Palatino-Italic: Standard "(001.005S)" Standard ROM
+*Font Palatino-Roman: Standard "(001.005S)" Standard ROM
+*Font Times-Bold: Standard "(001.007S)" Standard ROM
+*Font Times-BoldItalic: Standard "(001.009S)" Standard ROM
+*Font Times-Italic: Standard "(001.007S)" Standard ROM
+*Font Times-Roman: Standard "(001.007S)" Standard ROM
+*Font ZapfChancery-MediumItalic: Standard "(001.007S)" Standard ROM
+*Font ZapfDingbats: Special "(001.004S)" Special ROM
+*Font Symbol: Special "(001.007S)" Special ROM
+*Font Alaska: Standard "(001.005)" Standard ROM
+*Font AlaskaExtrabold: Standard "(001.005)" Standard ROM
+*Font AntiqueOakland: Standard "(001.005)" Standard ROM
+*Font AntiqueOakland-Bold: Standard "(001.005)" Standard ROM
+*Font AntiqueOakland-Oblique: Standard "(001.005)" Standard ROM
+*Font ClevelandCondensed: Standard "(001.005)" Standard ROM
+*Font Connecticut: Standard "(001.005)" Standard ROM
+*Font Guatemala-Antique: Standard "(001.005)" Standard ROM
+*Font Guatemala-Bold: Standard "(001.005)" Standard ROM
+*Font Guatemala-Italic: Standard "(001.005)" Standard ROM
+*Font Guatemala-BoldItalic: Standard "(001.005)" Standard ROM
+*Font LetterGothic: Standard "(001.005)" Standard ROM
+*Font LetterGothic-Bold: Standard "(001.005)" Standard ROM
+*Font LetterGothic-Oblique: Standard "(001.005)" Standard ROM
+*Font Maryland: Standard "(001.005)" Standard ROM
+*Font Oklahoma: Standard "(001.005)" Standard ROM
+*Font Oklahoma-Bold: Standard "(001.005)" Standard ROM
+*Font Oklahoma-Oblique: Standard "(001.005)" Standard ROM
+*Font Oklahoma-BoldOblique: Standard "(001.005)" Standard ROM
+*Font Utah: Standard "(001.005)" Standard ROM
+*Font Utah-Bold: Standard "(001.005)" Standard ROM
+*Font Utah-Oblique: Standard "(001.005)" Standard ROM
+*Font Utah-BoldOblique: Standard "(001.005)" Standard ROM
+*Font UtahCondensed: Standard "(001.005)" Standard ROM
+*Font UtahCondensed-Bold: Standard "(001.005)" Standard ROM
+*Font UtahCondensed-Oblique: Standard "(001.004)" Standard ROM
+*Font UtahCondensed-BoldOblique: Standard "(001.005)" Standard ROM
+*Font BermudaScript: Standard "(001.005)" Standard ROM
+*Font Germany: Standard "(001.005)" Standard ROM
+*Font SanDiego: Standard "(001.005)" Standard ROM
+*Font US-Roman: Standard "(001.005)" Standard ROM
+*?FontQuery: "
+save
+count 1 gt
+  {exch dup dup
+   =string cvs (/) print print (:) print
+   FontDirectory exch known
+     {pop(Yes)}
+     {(fonts/)AppendName exch pop mark exch
+      {}=string filenameforall counttomark
+      0 gt
+        {cleartomark(Yes)}
+        {cleartomark(No)}ifelse
+     }ifelse
+   =
+  }if
+  (*) = flush
+restore
+"
+*End
+*?FontList: "
+save
+  FontDirectory{pop ==}forall
+  (fonts/*)
+  {dup length 6 sub 6 exch getinterval cvn ==
+  }=string filenameforall
+  (*) = flush
+restore
+"
+*End
