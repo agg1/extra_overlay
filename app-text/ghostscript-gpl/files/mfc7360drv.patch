@@ -229,9 +229,9 @@ diff -Naur ghostscript-9.20.orig/contrib/gdevmfc73x0.c ghostscript-9.20/contrib/
 +        fputs("@PJL ENTER LANGUAGE=PCL\n", prn_stream);
 +    }
 +
-+    /* MFC-7360N needs coordinate translation of (-180,0) instead of (-120,0)
++    /* MFC-7360N needs coordinate translation of (-150,0) instead of (-180,0)
 +       (X, Y coordinates here are specified in 1/720-inch units) */
-+    gs_sprintf(page_init, "\033&l-180U\033*r0F\033&u%dD%s", y_dpi, tray_pcl);
++    gs_sprintf(page_init, "\033&l-150U\033*r0F\033&u%dD%s", y_dpi, tray_pcl);
 +
 +    return dljet_mono_print_page_copies(pdev, prn_stream, num_copies,
 +                                        y_dpi, PCL_FEATURES,

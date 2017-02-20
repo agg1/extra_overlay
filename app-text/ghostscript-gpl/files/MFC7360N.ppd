@@ -24,7 +24,6 @@
 *TTRasterizer:	Type42
 *1284DeviceID: "MFG:Brother;MDL:MFC-7360N series;CMD:PCL5,PJL,PCLXL;DRV:Dmfc73x0,R1,M0,TG;"
 
-
 *driverName mfc73x0: ""
 *driverType G/Ghostscript built-in: ""
 *driverUrl: "http://www.padwalker.com"
@@ -33,18 +32,15 @@
 *Throughput:	"18"
 *FreeVM: "1700000"
 
-
 *FoomaticIDs: Brother-MFC-7360 mfc73x0
 *FoomaticRIPCommandLine: "gs -q -dBATCH -dPARANOIDSAFER -dNOPAUSE -dNO&&
 MEDIAATTRS -dNOINTERPOLATE -sDEVICE=mfc73x0%A%Z -sOutputFile=-%C -f -"
 *End
 
-
-*HWMargins: 0 0 0 0
+*%*HWMargins: 0 0 0 0
 *VariablePaperSize: False
-*MaxMediaWidth: 612
-*MaxMediaHeight: 1008
-
+*%*MaxMediaWidth: 612
+*%*MaxMediaHeight: 1008
 
 
 *OpenGroup: General/General
@@ -194,8 +190,6 @@ DEVICEHEIGHTPOINTS=1008"
 *CloseUI: *Resolution
 
 *CloseGroup: General
-
-
 
 *% Generic boilerplate PPD stuff as standard PostScript fonts and so on
 *DefaultFont: Courier
