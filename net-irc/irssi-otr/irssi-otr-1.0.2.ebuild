@@ -8,7 +8,7 @@ inherit autotools
 
 DESCRIPTION="Libotr (https://otr.cypherpunks.ca) support for Irssi"
 HOMEPAGE="https://github.com/cryptodotis/irssi-otr"
-SRC_URI="https://github.com/cryptodotis/irssi-otr/archive/${P}.tar.gz"
+SRC_URI="https://github.com/cryptodotis/irssi-otr/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
