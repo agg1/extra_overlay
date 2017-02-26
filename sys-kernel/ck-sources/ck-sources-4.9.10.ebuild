@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
 	http://users.tpg.com.au/ckolivas/kernel/"
 
-K_WANT_GENPATCHES="base extras experimental frandom"
+K_WANT_GENPATCHES="base extras experimental frandom lrng"
 K_EXP_GENPATCHES_PULL="1"
 K_EXP_GENPATCHES_NOUSE="1"
 K_GENPATCHES_VER="12"
