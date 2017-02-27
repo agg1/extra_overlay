@@ -14,6 +14,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
+CFLAGS="-O0 -nopie -fno-pie"
 
 RDEPEND="dev-libs/libevent"
 DEPEND="${RDEPEND}"
@@ -32,7 +33,7 @@ src_configure() {
 }
 
 src_compile() {
-	emake
+	emake CFLAGS="${CFLAGS}"
 }
 
 src_install() {
