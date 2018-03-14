@@ -1,9 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-inherit autotools eutils linux-info pam toolchain-funcs user versionator
+EAPI=6
+inherit autotools linux-info pam toolchain-funcs user
 
 DESCRIPTION="A full-featured web proxy cache"
 HOMEPAGE="http://www.squid-cache.org/"
@@ -11,8 +10,8 @@ SRC_URI="http://www.squid-cache.org/Versions/v3/3.5/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ~ia64 ~mips ~ppc ppc64 ~sparc ~x86 ~x86-fbsd"
-IUSE="caps ipv6 pam ldap samba sasl kerberos nis radius ssl snmp selinux logrotate test \
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~x86-fbsd"
+IUSE="caps ipv6 pam ldap libressl samba sasl kerberos nis radius ssl snmp selinux logrotate test \
 	ecap esi ssl-crtd \
 	mysql postgres sqlite \
 	qos tproxy \
@@ -25,7 +24,10 @@ COMMON_DEPEND="caps? ( >=sys-libs/libcap-2.16 )
 	ldap? ( net-nds/openldap )
 	kerberos? ( virtual/krb5 )
 	qos? ( net-libs/libnetfilter_conntrack )
-	ssl? ( dev-libs/openssl:0 dev-libs/nettle >=net-libs/gnutls-3.1.5 )
+	ssl? (
+		libressl? ( dev-libs/libressl:0 )
+		!libressl? ( dev-libs/openssl:0 )
+    )
 	sasl? ( dev-libs/cyrus-sasl )
 	ecap? ( net-libs/libecap:1 )
 	esi? ( dev-libs/expat dev-libs/libxml2 )
@@ -35,7 +37,6 @@ COMMON_DEPEND="caps? ( >=sys-libs/libcap-2.16 )
 	dev-libs/libltdl:0"
 DEPEND="${COMMON_DEPEND}
 	ecap? ( virtual/pkgconfig )
-	sys-apps/ed
 	test? ( dev-util/cppunit )"
 RDEPEND="${COMMON_DEPEND}
 	samba? ( net-fs/samba )
@@ -61,7 +62,10 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-3.5.7-gentoo.patch"
+	eapply "${FILESDIR}/${PN}-3.5.7-gentoo.patch"
+	eapply -p0 "${FILESDIR}/${PN}-cppunit-1.14.patch"
+	eapply "${FILESDIR}/${PN}-2018-1.patch"
+	eapply "${FILESDIR}/${PN}-2018-2.patch"
 	sed -i -e 's:/usr/local/squid/etc:/etc/squid:' \
 		INSTALL QUICKSTART \
 		scripts/fileno-to-pathname.pl \
@@ -96,8 +100,7 @@ src_prepare() {
 	sed -i -e 's:_LTDL_SETUP:LTDL_INIT([installable]):' \
 		libltdl/configure.ac || die
 
-	epatch_user
-
+	eapply_user
 	eautoreconf
 }
 
@@ -152,7 +155,14 @@ src_configure() {
 		fi
 	fi
 
+	tc-export_build_env BUILD_CXX
+	export BUILDCXX=${BUILD_CXX}
+	export BUILDCXXFLAGS=${BUILD_CXXFLAGS}
 	tc-export CC AR
+
+	# Should be able to drop this workaround with newer versions.
+	# https://bugs.squid-cache.org/show_bug.cgi?id=4224
+	tc-is-cross-compiler && export squid_cv_gnu_atomics=no
 
 	econf \
 		--sysconfdir=/etc/squid \
@@ -178,6 +188,7 @@ src_configure() {
 		--enable-icmp \
 		--enable-follow-x-forwarded-for \
 		--with-large-files \
+		--with-build-environment=default \
 		--disable-strict-error-checking \
 		--disable-arch-native \
 		--with-ltdl-includedir=/usr/include \
@@ -186,8 +197,6 @@ src_configure() {
 		$(use_enable ipv6) \
 		$(use_enable snmp) \
 		$(use_with ssl openssl) \
-		$(use_with ssl nettle) \
-		$(use_with ssl gnutls) \
 		$(use_enable ssl-crtd) \
 		$(use_enable ecap) \
 		$(use_enable esi) \
@@ -222,7 +231,7 @@ src_install() {
 	newdoc helpers/external_acl/kerberos_ldap_group/README README.kerberos_ldap_group
 	newdoc tools/purge/README README.purge
 	newdoc tools/helper-mux.README README.helper-mux
-	dohtml RELEASENOTES.html
+	dodoc RELEASENOTES.html
 
 	newpamd "${FILESDIR}/squid.pam" squid
 	newconfd "${FILESDIR}/squid.confd-r1" squid
@@ -237,13 +246,4 @@ src_install() {
 
 	diropts -m0750 -o squid -g squid
 	keepdir /var/log/squid /etc/ssl/squid /var/lib/squid
-}
-
-pkg_postinst() {
-	if [[ $(get_version_component_range 1 ${REPLACING_VERSIONS}) -lt 3 ]] || \
-		[[ $(get_version_component_range 2 ${REPLACING_VERSIONS}) -lt 5 ]]; then
-		elog "Please read the release notes at:"
-		elog "  http://www.squid-cache.org/Versions/v3/3.5/RELEASENOTES.html"
-		echo
-	fi
 }
