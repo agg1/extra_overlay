@@ -8,7 +8,7 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
 	http://kernel.kolivas.org/"
 
-IUSE="experimental"
+#IUSE="experimental"
 
 K_WANT_GENPATCHES="base extras experimental frandom lrng"
 #K_WANT_GENPATCHES="base extras experimental frandom"
