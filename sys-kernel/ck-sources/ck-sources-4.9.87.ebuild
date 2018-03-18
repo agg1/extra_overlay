@@ -10,8 +10,8 @@ HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
 
 IUSE="experimental"
 
-K_WANT_GENPATCHES="base extras experimental frandom lrng"
-K_GENPATCHES_VER="31"
+K_WANT_GENPATCHES="base extras experimental frandom deblob"
+K_GENPATCHES_VER="90"
 K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="1"
 K_NOSETEXTRAVERSION="1"
@@ -36,10 +36,10 @@ CK_LVER_URL="${CK_BASE_URL}/${K_BRANCH_ID}/${K_BRANCH_ID}-ck${CK_VERSION}"
 CK_URI="${CK_LVER_URL}/${CK_FILE}"
 CK_URI="${CK_LVER_URL}/${CK_FILE}"
 
-# Fix for: https://github.com/gentoo/gentoo/pull/6942
-BLKIO_HASH="25849740d77dfc089fdbfb53623e50d38a972aff"
-BLKIO_FILE="${PN}-4.14-blkio-fix.patch"
-BLKIO_URI="https://github.com/ckolivas/linux/commit/${BLKIO_HASH}.patch -> ${BLKIO_FILE}"
+# solves bug #606866 (Fix build for CONFIG_FREEZER disabled.x)
+FRZR_HASH="7de569950716147ed436b27936628ee3ab5b45cc"
+FRZR_FILE="${PN}-4.9-freezer-fix.patch"
+FRZR_URI="https://github.com/ckolivas/linux/commit/${FRZR_HASH}.patch -> ${FRZR_FILE}"
 
 SRC_URI="${KERNEL_URI} ${GENPATCHES_URI} ${ARCH_URI} ${CK_URI} ${BLKIO_URI}"
 
