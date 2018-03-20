@@ -1,32 +1,23 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-
-CMAKE_MIN_VERSION=2.8
 
 inherit cmake-utils
 
 DESCRIPTION="A suite for man in the middle attacks"
 HOMEPAGE="https://github.com/Ettercap/ettercap"
+SRC_URI="https://github.com/Ettercap/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz" #mirror does not work
 
 LICENSE="GPL-2+"
 SLOT="0"
-
-if [[ ${PV} == "9999" ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/Ettercap/${PN}.git"
-else
-	SRC_URI="https://github.com/Ettercap/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz" #mirror does not work
-	KEYWORDS="~alpha ~amd64 ~arm ~sparc ~x86 ~x86-fbsd"
-fi
-#IUSE="doc gtk ipv6 ncurses +plugins test"
-IUSE="doc gtk ipv6 ncurses +plugins"
+KEYWORDS="~alpha ~amd64 ~arm ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
+IUSE="gtk ipv6 ncurses +plugins libressl"
 
 RDEPEND="dev-libs/libbsd
 	dev-libs/libpcre
-	dev-libs/openssl
+    !libressl? ( dev-libs/openssl:0= )
+    libressl? ( dev-libs/libressl:0= )
 	net-libs/libnet:1.1
 	>=net-libs/libpcap-0.8.1
 	sys-libs/zlib
@@ -39,16 +30,16 @@ RDEPEND="dev-libs/libbsd
 		>=x11-libs/gtk+-2.2.2:2
 		>=x11-libs/pango-1.2.3
 	)
-	ncurses? ( >=sys-libs/ncurses-5.3 )
+	ncurses? ( >=sys-libs/ncurses-5.3:= )
 	plugins? ( >=net-misc/curl-7.26.0 )"
 DEPEND="${RDEPEND}
-	doc? ( app-text/ghostscript-gpl
-		sys-apps/groff )
 	sys-devel/flex
 	virtual/yacc"
 
 src_prepare() {
 	sed -i "s:Release:Release Gentoo:" CMakeLists.txt || die
+	epatch "${FILESDIR}"/cve-2017-6430.patch
+	cmake-utils_src_prepare
 }
 
 src_configure() {
@@ -57,7 +48,6 @@ src_configure() {
 		$(cmake-utils_use_enable gtk)
 		$(cmake-utils_use_enable plugins)
 		$(cmake-utils_use_enable ipv6)
-		$(cmake-utils_use_enable doc PDF_DOCS)
 		-DBUNDLED_LIBS=OFF
 		-DSYSTEM_LIBS=ON
 		-DINSTALL_SYSCONFDIR="${EROOT}"etc
