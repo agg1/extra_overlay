@@ -19,7 +19,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="x11-libs/wxGTK:2.8[X]
+DEPEND="x11-libs/wxGTK[X]
 	>=dev-libs/boost-1.34
 	>=dev-libs/icu-56
 	>=net-misc/curl-7.15.5"
