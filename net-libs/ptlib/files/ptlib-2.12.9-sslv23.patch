@@ -1,0 +1,13 @@
+diff -Naur ptlib-2.12.9-orig/src/ptclib/pssl.cxx ptlib-2.12.9/src/ptclib/pssl.cxx
+--- ptlib-2.12.9-orig/src/ptclib/pssl.cxx	2014-02-17 02:14:34.000000000 +0000
++++ ptlib-2.12.9/src/ptclib/pssl.cxx	2018-03-27 21:33:02.639498106 +0000
+@@ -1190,7 +1190,8 @@
+ 
+   switch (method) {
+     case SSLv3:
+-      meth = SSLv3_method();
++      //meth = SSLv3_method();
++      meth = SSLv23_method();
+       break;
+     case TLSv1:
+       meth = TLSv1_method(); 

@@ -65,7 +65,8 @@ src_prepare() {
 		"${FILESDIR}/${PN}-2.10.9-respect_cxxflags.patch" \
 		"${FILESDIR}/${PN}-2.10.10-mga-bison-parameter.patch" \
 		"${FILESDIR}/${PN}-2.10.10-respect_cflags_cxxflags.patch" \
-		"${FILESDIR}/ptlib-sslv3-exclude.patch"
+		"${FILESDIR}/ptlib-2.12.9-sslv23.patch"
+#		"${FILESDIR}/ptlib-sslv3-exclude.patch"
 	if ! use telnet; then
 		epatch "${FILESDIR}/${PN}-2.10.9-disable-telnet-symbols.patch"
 	fi
@@ -162,6 +163,8 @@ src_configure() {
 		$(use_enable wav wavfile) \
 		$(use_enable xml expat) \
 		$(use_enable xmlrpc)
+
+		epatch_user
 }
 
 src_compile() {

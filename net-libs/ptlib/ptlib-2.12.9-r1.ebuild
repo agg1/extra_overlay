@@ -76,6 +76,8 @@ src_prepare() {
 		ewarn "TARGET variable is set. Removing as it would break the build, bug #465722."
 		unset TARGET
 	fi
+
+    epatch_user
 }
 
 src_configure() {
