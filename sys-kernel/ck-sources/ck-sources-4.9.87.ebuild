@@ -10,7 +10,7 @@ HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
 
 IUSE="experimental"
 
-K_WANT_GENPATCHES="base extras experimental frandom deblob"
+K_WANT_GENPATCHES="base extras experimental frandom"
 K_GENPATCHES_VER="90"
 K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="1"
