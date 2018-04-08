@@ -14,7 +14,7 @@ IUSE=""
 RESTRICT="test"
 
 src_compile() {
-	make linux
+	make -j1 linux
 }
 
 src_install() {
