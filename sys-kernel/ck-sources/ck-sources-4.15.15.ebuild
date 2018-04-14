@@ -8,12 +8,15 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
 	http://kernel.kolivas.org/"
 
-IUSE="experimental"
+IUSE="deblob experimental"
 
 K_WANT_GENPATCHES="base extras experimental"
 K_GENPATCHES_VER="18"
 K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="1"
+K_NOSETEXTRAVERSION="1"
+K_NOUSENAME="1"
+K_PREDEBLOBBED="1"
 
 PYTHON_COMPAT=( python2_7 )
 inherit python-any-r1 kernel-2

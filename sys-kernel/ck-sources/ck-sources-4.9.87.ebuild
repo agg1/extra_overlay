@@ -8,13 +8,15 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://dev.gentoo.org/~mpagano/genpatches/
         http://kernel.kolivas.org/"
 
-IUSE="experimental"
+IUSE="deblob experimental"
 
-K_WANT_GENPATCHES="base extras experimental frandom"
+K_WANT_GENPATCHES="base extras experimental"
 K_GENPATCHES_VER="90"
 K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="1"
 K_NOSETEXTRAVERSION="1"
+K_NOUSENAME="1"
+K_PREDEBLOBBED="1"
 
 PYTHON_COMPAT=( python2_7 )
 inherit python-any-r1 kernel-2
@@ -45,25 +47,3 @@ SRC_URI="${KERNEL_URI} ${GENPATCHES_URI} ${ARCH_URI} ${CK_URI} ${BLKIO_URI}"
 
 UNIPATCH_LIST="${DISTDIR}/${CK_FILE} ${DISTDIR}/${BLKIO_FILE}"
 UNIPATCH_STRICTORDER="yes"
-
-#pkg_setup() {
-#        use deblob && python-any-r1_pkg_setup
-#        kernel-2_pkg_setup
-#}
-#
-#src_prepare() {
-#
-##-- Comment out CK's EXTRAVERSION in Makefile ---------------------------------
-#
-#        # linux-info eclass cannot handle recursively expanded variables in Makefile #490328
-#        sed -i -e 's/\(^EXTRAVERSION :=.*$\)/# \1/' "${S}/Makefile" || die
-#
-#        kernel-2_src_prepare
-#}
-#
-#pkg_postinst() {
-#        elog "ck-sources previously enabled CPU optimizations by default."
-#        elog "USE=\"experimental\" is now required to enable this patch."
-#        elog "this can be set in /etc/portage/package.use (or make.conf)"
-#}
-
