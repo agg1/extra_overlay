@@ -27,7 +27,7 @@ src_prepare() {
 src_compile() {
 	## the "test"-target leads to an access-violation -> so we skip it
 	## as it's only for demonstration purposes anyway.
-	emake CC=$(tc-getCC) CFLAGS="${CFLAGS}" shc
+	emake CC=$(tc-getCC) CFLAGS="${CFLAGS} -fno-pie -no-pie" shc
 }
 
 src_install() {
