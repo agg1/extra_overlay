@@ -120,3 +120,16 @@ index 9b53f4c..1b943ee 100644
  #endif
  
  #include <event.h>
+diff --git a/systrace.h b/systrace.h
+index f57cdb2..1778c4f 100644
+--- a/systrace.h
++++ b/systrace.h
+@@ -34,7 +34,7 @@
+ #include <sys/queue.h>
+ 
+ #ifndef __APPLE__
+-#define _PATH_XSYSTRACE	"/usr/X11R6/bin/xsystrace"
++#define _PATH_XSYSTRACE	"/usr/bin/xsystrace"
+ #else
+ #define	_PATH_XSYSTRACE	"/Applications/Utilities/Cocoa-Systrace.app/Contents/MacOS/Cocoa-Systrace"
+ #endif
