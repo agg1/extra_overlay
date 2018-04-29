@@ -4,13 +4,13 @@
 
 EAPI="6"
 
-inherit toolchain-funcs git-r3
-#autotools
+inherit toolchain-funcs
+#autotools git-r3
 
 DESCRIPTION="Systrace is a computer security utility which limits an application's access to the system by enforcing access policies for system calls."
 HOMEPAGE="http://www.citi.umich.edu/u/provos/systrace/"
-#SRC_URI="http://www.citi.umich.edu/u/provos/systrace/${P}.tar.gz"
-EGIT_REPO_URI="file:///media/DISTFILES/git/xsystrace"
+SRC_URI="http://www.citi.umich.edu/u/provos/xsystrace/${P}.tar.gz"
+#EGIT_REPO_URI="file:///media/DISTFILES/git/xsystrace"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -41,8 +41,6 @@ src_compile() {
 src_install() {
     default
 	insinto /usr/bin/
-	newins src/notification xsystrace
-	doexe ${D}/usr/bin/xsystrace
+	newbin src/notification xsystrace
 	rm -f ${D}/usr/bin/notification
-	#doman xsystrace.1
 }
