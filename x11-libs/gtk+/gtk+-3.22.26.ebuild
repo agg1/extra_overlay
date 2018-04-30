@@ -128,11 +128,11 @@ src_prepare() {
 	# Fix broken autotools logic
 	eapply "${FILESDIR}"/${PN}-3.22.20-libcloudproviders-automagic.patch
 
-	# disable dependency chain buildup to dbus
-	eapply "${FILESDIR}"/gtk+-3-disable-atk-bridge.patch
-
 	eautoreconf
 	gnome2_src_prepare
+
+	# disable dependency chain buildup to dbus
+	eapply "${FILESDIR}"/gtk+-3-disable-atk-bridge.patch
 }
 
 multilib_src_configure() {
