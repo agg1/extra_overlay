@@ -46,6 +46,9 @@ PATCHES=( "${FILESDIR}/${PN}-gnuinstalldirs.patch" )
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_FULL_INSTALL_DATAROOTDIR=share
+		-DCMAKE_FULL_INSTALL_MANDIR=share/man
+		-DCMAKE_FULL_INSTALL_INCLUDEDIR=include
 		-DWANT_ALSA=$(usex alsa)
 		-DWANT_CPPUNIT=OFF
 		-DWANT_DEBUG=OFF
@@ -66,10 +69,10 @@ src_configure() {
 	cmake-utils_src_configure
 }
 
-src_install() {
-	cmake-utils_src_install
-	dosym ../../${PN}/data/doc /usr/share/doc/${PF}/html
-}
+#src_install() {
+#	cmake-utils_src_install
+#	dosym ../../${PN}/data/doc /usr/share/doc/${PF}/html
+#}
 
 pkg_postinst() {
 	xdg_mimeinfo_database_update
