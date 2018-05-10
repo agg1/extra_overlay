@@ -149,7 +149,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/rsyslog-strkx.patch
+#	epatch "${FILESDIR}"/rsyslog-strkx.patch
 	epatch "${FILESDIR}"/libgcryptinitfix.patch
 	default
 
