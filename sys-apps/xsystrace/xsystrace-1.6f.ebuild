@@ -20,7 +20,7 @@ IUSE=""
 RDEPEND="sys-apps/systrace
 		x11-libs/libX11
 		x11-libs/libXext
-		x11-libs/gtk+"
+		x11-libs/gtk+:2"
 DEPEND="${RDEPEND}"
 
 RESTRICT="test"
