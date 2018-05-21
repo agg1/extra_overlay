@@ -35,12 +35,11 @@ IUSE="a52 alsa altivec aom archive bidi bluray cddb chromaprint chromecast dbus 
 	libnotify +libsamplerate libtar libtiger linsys lirc live lua macosx-notifications
 	macosx-qtkit matroska microdns modplug mp3 mpeg mtp musepack ncurses neon nfs ogg
 	omxil opencv optimisememory opus png postproc projectm pulseaudio +qt5 rdp rtsp
-	run-as-root samba schroedinger sdl-image sftp shout sid skins speex svg taglib
-	theora tremor truetype twolame udev upnp vaapi v4l vcd vdpau vnc vorbis vpx wayland
-	wma-fixed +X x264 x265 xml zeroconf zvbi cpu_flags_x86_mmx cpu_flags_x86_sse
+	run-as-root samba schroedinger sdl-image sftp shout sid skins soxr speex srt ssl svg
+	taglib theora tremor truetype twolame udev upnp vaapi v4l vcd vdpau vnc vorbis vpx
+	wayland wma-fixed +X x264 x265 xml zeroconf zvbi cpu_flags_x86_mmx cpu_flags_x86_sse
 "
 REQUIRED_USE="
-	bidi? ( truetype )
 	chromecast? ( encode )
 	directx? ( ffmpeg )
 	fontconfig? ( truetype )
@@ -53,7 +52,7 @@ REQUIRED_USE="
 	vdpau? ( ffmpeg X )
 "
 RDEPEND="
-	net-dns/libidn:0
+	net-dns/libidn:=
 	sys-libs/zlib:0[minizip]
 	virtual/libintl:0
 	virtual/opengl
@@ -61,7 +60,12 @@ RDEPEND="
 	alsa? ( media-libs/alsa-lib:0 )
 	aom? ( media-libs/libaom:= )
 	archive? ( app-arch/libarchive:= )
-	bidi? ( dev-libs/fribidi:0 )
+	bidi? (
+		dev-libs/fribidi:0
+		media-libs/freetype:2[harfbuzz]
+		media-libs/harfbuzz
+		virtual/ttf-fonts:0
+	)
 	bluray? ( media-libs/libbluray:0= )
 	cddb? ( media-libs/libcddb:0 )
 	chromaprint? ( media-libs/chromaprint:0= )
@@ -165,10 +169,12 @@ RDEPEND="
 		x11-libs/libXinerama:0
 		x11-libs/libXpm:0
 	)
+	soxr? ( media-libs/soxr )
 	speex? (
 		>=media-libs/speex-1.2.0:0
 		media-libs/speexdsp:0
 	)
+	srt? ( net-libs/srt )
 	svg? (
 		gnome-base/librsvg:2
 		x11-libs/cairo:0
@@ -212,13 +218,14 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig:*
 	amd64? ( dev-lang/yasm:* )
 	x86? ( dev-lang/yasm:* )
-	X? ( x11-proto/xproto )
+	X? ( x11-base/xorg-proto )
 "
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.1.0-fix-libtremor-libs.patch # build system
 	"${FILESDIR}"/${PN}-2.2.4-libav-11.7.patch # bug #593460
 	"${FILESDIR}"/${PN}-2.2.8-freerdp-2.patch # bug 590164
+	"${FILESDIR}"/${PN}-3.0.1-qt-5.11.patch # TODO upstream
 )
 
 DOCS=( AUTHORS THANKS NEWS README doc/fortunes.txt )
@@ -279,6 +286,7 @@ src_configure() {
 		$(use_enable aom)
 		$(use_enable archive)
 		$(use_enable bidi fribidi)
+		$(use_enable bidi harfbuzz)
 		$(use_enable bluray)
 		$(use_enable cddb libcddb)
 		$(use_enable chromaprint)
@@ -326,6 +334,7 @@ src_configure() {
 		$(use_enable lua)
 		$(use_enable macosx-notifications osx-notifications)
 		$(use_enable macosx-qtkit)
+		$(use_enable matroska)
 		$(use_enable microdns)
 		$(use_enable modplug mod)
 		$(use_enable mp3 mad)
@@ -355,13 +364,14 @@ src_configure() {
 		$(use_enable shout)
 		$(use_enable sid)
 		$(use_enable skins skins2)
+		$(use_enable soxr)
 		$(use_enable speex)
+		$(use_enable srt)
 		$(use_enable svg)
 		$(use_enable svg svgdec)
 		$(use_enable taglib)
 		$(use_enable theora)
 		$(use_enable tremor)
-		$(use_enable truetype freetype)
 		$(use_enable twolame)
 		$(use_enable udev)
 		$(use_enable upnp)
@@ -403,10 +413,8 @@ src_configure() {
 		--disable-shine
 		--disable-sndio
 		--disable-spatialaudio
-		--disable-srt
 		--disable-vsxu
 		--disable-wasapi
-		--disable-gnutls
 	)
 	# ^ We don't have these disabled libraries in the Portage tree yet.
 
@@ -428,7 +436,13 @@ src_configure() {
 
 	xdg_environment_reset # bug 608256
 
-	if use truetype || use projectm ; then
+	if use truetype || use bidi; then
+		myeconfargs+=( --enable-freetype )
+	else
+		myeconfargs+=( --disable-freetype )
+	fi
+
+	if use truetype || use projectm; then
 		local dejavu="/usr/share/fonts/dejavu/"
 		myeconfargs+=(
 			--with-default-font=${dejavu}/DejaVuSans.ttf
