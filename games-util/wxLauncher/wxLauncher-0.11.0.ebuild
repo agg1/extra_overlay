@@ -1,6 +1,8 @@
 EAPI="6"
+PYTHON_COMPAT=( python3_5 )
+#PYTHON_COMPAT=( python3_{4,5,6} )
 
-inherit cmake-utils
+inherit cmake-utils python-single-r1
 
 DESCRIPTION="Multi-platform launcher for Freespace 2"
 HOMEPAGE="https://github.com/scp-fs2open/wxLauncher"
@@ -13,5 +15,5 @@ IUSE=""
 
 RESTRICT="test"
 
-RDEPEND="dev-python/markdown"
+RDEPEND="dev-python/markdown x11-libs/wxGTK"
 DEPEND="${RDEPEND}"
