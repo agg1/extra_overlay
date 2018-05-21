@@ -27,7 +27,6 @@ RDEPEND="
 	mysql? ( virtual/mysql )
 	gsm? ( media-sound/gsm )
 	speex? ( media-libs/speex )
-	ssl? ( dev-libs/openssl:0 )
 	ssl? (
 		!libressl? ( dev-libs/openssl:0= )
 		libressl? ( dev-libs/libressl:0= )
