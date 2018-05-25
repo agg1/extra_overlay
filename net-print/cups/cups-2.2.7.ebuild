@@ -180,7 +180,6 @@ multilib_src_configure() {
 		$(multilib_native_use_with python python "${PYTHON}")
 		$(use_enable static-libs static)
 		$(use_enable threads)
-		$(use_enable ssl gnutls)
 		$(use_enable systemd)
 		$(multilib_native_use_enable usb libusb)
 		$(use_enable zeroconf avahi)
