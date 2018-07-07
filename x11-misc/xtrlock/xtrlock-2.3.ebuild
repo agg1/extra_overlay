@@ -18,7 +18,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	x11-proto/xproto
+	x11-base/xorg-proto
 	x11-misc/imake
 "
 
