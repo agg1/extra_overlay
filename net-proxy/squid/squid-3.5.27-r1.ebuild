@@ -10,11 +10,11 @@ SRC_URI="http://www.squid-cache.org/Versions/v3/3.5/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~x86-fbsd"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~sparc x86 ~x86-fbsd"
 IUSE="caps ipv6 pam ldap libressl samba sasl kerberos nis radius ssl snmp selinux logrotate test \
 	ecap esi ssl-crtd \
 	mysql postgres sqlite \
-	qos tproxy \
+	perl qos tproxy \
 	+htcp +wccp +wccpv2 \
 	pf-transparent ipf-transparent kqueue \
 	elibc_uclibc kernel_linux"
@@ -27,19 +27,20 @@ COMMON_DEPEND="caps? ( >=sys-libs/libcap-2.16 )
 	ssl? (
 		libressl? ( dev-libs/libressl:0 )
 		!libressl? ( dev-libs/openssl:0 )
-    )
+	)
 	sasl? ( dev-libs/cyrus-sasl )
 	ecap? ( net-libs/libecap:1 )
 	esi? ( dev-libs/expat dev-libs/libxml2 )
 	!x86-fbsd? ( logrotate? ( app-admin/logrotate ) )
 	>=sys-libs/db-4:*
-	dev-lang/perl
 	dev-libs/libltdl:0"
 DEPEND="${COMMON_DEPEND}
+	dev-lang/perl
 	ecap? ( virtual/pkgconfig )
 	test? ( dev-util/cppunit )"
 RDEPEND="${COMMON_DEPEND}
 	samba? ( net-fs/samba )
+	perl? ( dev-lang/perl )
 	mysql? ( dev-perl/DBD-mysql )
 	postgres? ( dev-perl/DBD-Pg )
 	selinux? ( sec-policy/selinux-squid )
@@ -220,6 +221,21 @@ src_install() {
 	# pinger needs suid as well
 	fowners root:squid /usr/libexec/squid/pinger
 	fperms 4750 /usr/libexec/squid/pinger
+
+	# these scripts depend on perl
+	if ! use perl; then
+		local f
+		local PERL_SCRIPTS=(
+		    "${D}"/usr/libexec/squid/basic_pop3_auth
+		    "${D}"/usr/libexec/squid/log_db_daemon
+		    "${D}"/usr/libexec/squid/basic_msnt_multi_domain_auth
+		    "${D}"/usr/libexec/squid/storeid_file_rewrite
+		    "${D}"/usr/libexec/squid/helper-mux.pl
+		)
+		for f in "${PERL_SCRIPTS[@]}"; do
+			rm -v "${f}" || die
+		done
+	fi
 
 	# cleanup
 	rm -f "${D}"/usr/bin/Run*
