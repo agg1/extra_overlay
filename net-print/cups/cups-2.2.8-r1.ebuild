@@ -5,14 +5,12 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit autotools gnome2-utils flag-o-matic linux-info xdg-utils \
-	multilib multilib-minimal pam python-single-r1 user versionator \
-	java-pkg-opt-2 systemd toolchain-funcs
+inherit autotools eapi7-ver gnome2-utils flag-o-matic linux-info xdg-utils multilib multilib-minimal pam python-single-r1 user java-pkg-opt-2 systemd toolchain-funcs
 
-MY_P=${P/_rc/rc}
-MY_P=${MY_P/_beta/b}
-MY_PV=${PV/_rc/rc}
-MY_PV=${MY_PV/_beta/b}
+MY_P="${P/_rc/rc}"
+MY_P="${MY_P/_beta/b}"
+MY_PV="${PV/_rc/rc}"
+MY_PV="${MY_PV/_beta/b}"
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
@@ -23,7 +21,7 @@ if [[ ${PV} == *9999 ]]; then
 else
 	#SRC_URI="https://github.com/apple/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	SRC_URI="https://github.com/apple/cups/releases/download/v${PV}/${P}-source.tar.gz"
-	KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ~ppc ~ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~m68k-mint"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~m68k-mint"
 fi
 
 DESCRIPTION="The Common Unix Printing System"
@@ -31,8 +29,7 @@ HOMEPAGE="https://www.cups.org/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="acl dbus debug java kerberos lprng-compat pam
-	python selinux +ssl libressl static-libs systemd +threads usb X xinetd zeroconf"
+IUSE="acl dbus debug java kerberos lprng-compat pam python selinux +ssl libressl static-libs systemd +threads usb X xinetd zeroconf"
 
 CDEPEND="
 	app-text/libpaper
@@ -51,6 +48,7 @@ CDEPEND="
 	python? ( ${PYTHON_DEPS} )
 	ssl? (
 		libressl? ( dev-libs/libressl:= )
+		!libressl? ( >=net-libs/gnutls-2.12.23-r6:0=[${MULTILIB_USEDEP}] )
 	)
 	systemd? ( sys-apps/systemd )
 	usb? ( virtual/libusb:1 )
@@ -84,7 +82,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.4.4-nostrip.patch"
 	"${FILESDIR}/${PN}-2.0.2-rename-systemd-service-files.patch"
 	"${FILESDIR}/${PN}-2.0.1-xinetd-installation-fix.patch"
-	"${FILESDIR}/${PN}-2.3_rc1-no_pam.patch" #651878
+	"${FILESDIR}/${P}-validation_fixes.patch" #657526
 )
 
 MULTILIB_CHOST_TOOLS=(
@@ -316,7 +314,7 @@ pkg_postinst() {
 	local v
 
 	for v in ${REPLACING_VERSIONS}; do
-		if ! version_is_at_least 2.2.2-r2 ${v}; then
+		if ! ver_test ${v} -ge 2.2.2-r2 ; then
 			echo
 			ewarn "The cupsd init script switched to using pidfiles. Shutting down"
 			ewarn "cupsd will fail the next time. To fix this, please run once as root"
