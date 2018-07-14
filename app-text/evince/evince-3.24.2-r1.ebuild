@@ -43,7 +43,6 @@ COMMON_DEPEND="
 	xps? ( >=app-text/libgxps-0.2.1:= )
 "
 RDEPEND="${COMMON_DEPEND}
-	gnome-base/gvfs
 	gnome-base/librsvg
 	|| (
 		>=x11-themes/adwaita-icon-theme-2.17.1
