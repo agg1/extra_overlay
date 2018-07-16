@@ -1,0 +1,24 @@
+diff -Naur rsyslog-8.33.1.orig/runtime/libgcry.c rsyslog-8.33.1/runtime/libgcry.c
+--- rsyslog-8.33.1.orig/runtime/libgcry.c	2018-04-07 04:03:28.394008632 +0000
++++ rsyslog-8.33.1/runtime/libgcry.c	2018-04-07 04:04:56.785009130 +0000
+@@ -676,6 +676,8 @@
+ rsRetVal
+ rsgcryInitCrypt(gcryctx ctx, gcryfile *pgf, uchar *fname, char openMode)
+ {
++	gcry_check_version(NULL);
++
+ 	gcryfile gf = NULL;
+ 	DEFiRet;
+ 
+diff -Naur rsyslog-8.33.1.orig/tools/rscryutil.c rsyslog-8.33.1/tools/rscryutil.c
+--- rsyslog-8.33.1.orig/tools/rscryutil.c	2018-04-07 04:03:28.395008632 +0000
++++ rsyslog-8.33.1/tools/rscryutil.c	2018-04-07 04:05:23.746009283 +0000
+@@ -182,6 +182,8 @@
+ static int
+ initCrypt(FILE *eifp)
+ {
++	gcry_check_version(NULL);
++
+  	int r = 0;
+ 	gcry_error_t gcryError;
+ 	char iv[4096];
