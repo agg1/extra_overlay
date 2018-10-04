@@ -21,7 +21,6 @@ RDEPEND=">=lxde-base/menu-cache-0.3.3
 	>=lxde-base/lxrandr-0.1.2
 	>=x11-libs/libfm-1.2.0
 	>=lxde-base/lxtask-0.1.6
-	>=lxde-base/lxterminal-0.1.11
 	media-gfx/gpicview
 	x11-misc/pcmanfm
 	x11-wm/openbox
