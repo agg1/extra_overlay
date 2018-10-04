@@ -21,7 +21,7 @@ else
 	fi
 	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -sparc ~x86 ~x86-fbsd"
 fi
-inherit autotools flag-o-matic gnome2-utils toolchain-funcs versionator virtualx xdg-utils ${SCM}
+inherit autotools flag-o-matic gnome2-utils toolchain-funcs virtualx xdg-utils ${SCM}
 
 DESCRIPTION="Media player and framework with support for most multimedia files and streaming"
 HOMEPAGE="https://www.videolan.org/vlc/"
@@ -29,15 +29,16 @@ HOMEPAGE="https://www.videolan.org/vlc/"
 LICENSE="LGPL-2.1 GPL-2"
 SLOT="0/5-9" # vlc - vlccore
 
-IUSE="a52 alsa altivec aom archive bidi bluray cddb chromaprint chromecast dbus dc1394
-	debug directx dts +dvbpsi dvd +encode faad fdk +ffmpeg flac fluidsynth fontconfig
-	+gcrypt gme gnome-keyring gstreamer ieee1394 jack jpeg kate libass libav libcaca
-	libnotify +libsamplerate libtar libtiger linsys lirc live lua macosx-notifications
-	macosx-qtkit matroska modplug mp3 mpeg mtp musepack ncurses neon nfs ogg
-	omxil opencv optimisememory opus png postproc projectm pulseaudio +qt5 rdp rtsp
-	run-as-root samba schroedinger sdl-image sftp shout sid skins soxr speex srt ssl svg
-	taglib theora tremor truetype twolame udev upnp vaapi v4l vdpau vnc vorbis vpx
+IUSE="a52 alsa altivec aom archive aribsub bidi bluray cddb chromaprint chromecast dbus
+	dc1394 debug directx dts +dvbpsi dvd +encode faad fdk +ffmpeg flac fluidsynth
+	fontconfig +gcrypt gme gnome-keyring gstreamer ieee1394 jack jpeg kate libass
+	libav libcaca libnotify +libsamplerate libtar libtiger linsys lirc live lua
+	macosx-notifications macosx-qtkit matroska modplug mp3 mpeg mtp musepack ncurses
+	neon nfs ogg omxil opencv optimisememory opus png postproc projectm pulseaudio +qt5
+	rdp run-as-root samba schroedinger sdl-image sftp shout sid skins soxr speex srt ssl
+	svg taglib theora tremor truetype twolame udev upnp vaapi v4l vdpau vnc vorbis vpx
 	wayland wma-fixed +X x264 x265 xml zeroconf zvbi cpu_flags_x86_mmx cpu_flags_x86_sse
+	libressl
 "
 REQUIRED_USE="
 	chromecast? ( encode )
@@ -61,6 +62,7 @@ RDEPEND="
 	alsa? ( media-libs/alsa-lib:0 )
 	aom? ( media-libs/libaom:= )
 	archive? ( app-arch/libarchive:= )
+	aribsub? ( media-libs/aribb24 )
 	bidi? (
 		dev-libs/fribidi:0
 		media-libs/freetype:2[harfbuzz]
@@ -89,7 +91,7 @@ RDEPEND="
 	fdk? ( media-libs/fdk-aac:0= )
 	ffmpeg? (
 		!libav? ( >=media-video/ffmpeg-3.1.3:0=[vaapi?,vdpau?] )
-		libav? ( >=media-video/libav-11.8:0=[vaapi?,vdpau?] )
+		libav? ( >=media-video/libav-12.2:0=[vaapi?,vdpau?] )
 	)
 	flac? (
 		media-libs/flac:0
@@ -178,6 +180,10 @@ RDEPEND="
 		media-libs/speexdsp:0
 	)
 	srt? ( net-libs/srt )
+	ssl? (
+		!libressl? ( net-libs/openssl:= )
+		libressl? ( dev-libs/libressl:= )
+	)
 	svg? (
 		gnome-base/librsvg:2
 		x11-libs/cairo:0
@@ -200,7 +206,7 @@ RDEPEND="
 	vorbis? ( media-libs/libvorbis:0 )
 	vpx? ( media-libs/libvpx:0= )
 	wayland? (
-		dev-libs/wayland
+		>=dev-libs/wayland-1.15
 		dev-libs/wayland-protocols
 	)
 	X? (
@@ -227,8 +233,6 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-2.1.0-fix-libtremor-libs.patch # build system
 	"${FILESDIR}"/${PN}-2.2.4-libav-11.7.patch # bug #593460
 	"${FILESDIR}"/${PN}-2.2.8-freerdp-2.patch # bug 590164
-	"${FILESDIR}"/${PN}-3.0.1-qt-5.11.patch # TODO upstream
-	"${FILESDIR}"/${P}-fix-disable-vlm.patch # bug 649798
 )
 
 DOCS=( AUTHORS THANKS NEWS README doc/fortunes.txt )
@@ -282,6 +286,7 @@ src_configure() {
 		$(use_enable altivec)
 		$(use_enable aom)
 		$(use_enable archive)
+		$(use_enable aribsub)
 		$(use_enable bidi fribidi)
 		$(use_enable bidi harfbuzz)
 		$(use_enable bluray)
@@ -352,7 +357,6 @@ src_configure() {
 		$(use_enable pulseaudio pulse)
 		$(use_enable qt5 qt)
 		$(use_enable rdp freerdp)
-		$(use_enable rtsp realrtsp)
 		$(use_enable run-as-root)
 		$(use_enable samba smbclient)
 		$(use_enable schroedinger)
