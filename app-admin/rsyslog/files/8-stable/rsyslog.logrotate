@@ -1,18 +1,3 @@
-# Uncomment the following directive if you have re-enabled
-# "/var/log/syslog" in "/etc/rsyslog.d/50-default.conf"
-#/var/log/syslog
-#{
-#	rotate 7
-#	daily
-#	missingok
-#	notifempty
-#	delaycompress
-#	compress
-#	postrotate
-#		test -r /run/rsyslogd.pid && kill -HUP $(cat /run/rsyslogd.pid) &>/dev/null
-#	endscript
-#}
-
 /var/log/auth.log
 /var/log/cron.log
 /var/log/daemon.log
@@ -23,14 +8,18 @@
 /var/log/user.log
 /var/log/debug.log
 /var/log/messages
+/var/log/iptables.log
 {
-	rotate 4
-	weekly
+	olddir /var/log/archive
+	rotate 730
+	daily
 	missingok
 	notifempty
 	compress
 	delaycompress
 	sharedscripts
+	dateext
+	dateformat -%Y%m%d%s
 	postrotate
 		test -r /run/rsyslogd.pid && kill -HUP $(cat /run/rsyslogd.pid) &>/dev/null
 	endscript
