@@ -161,6 +161,9 @@ src_configure() {
 	export BUILDCXXFLAGS=${BUILD_CXXFLAGS}
 	tc-export CC AR
 
+	export CFLAGS="${CFLAGS} -Wno-error -Wno-narrowing -Wno-write-strings -fpermissive"
+	export CXXFLAGS="${CXXFLAGS} -Wno-error -Wno-narrowing -Wno-write-strings -fpermissive"
+
 	# Should be able to drop this workaround with newer versions.
 	# https://bugs.squid-cache.org/show_bug.cgi?id=4224
 	tc-is-cross-compiler && export squid_cv_gnu_atomics=no
