@@ -124,6 +124,9 @@ src_prepare() {
 
 	eautoreconf
 	gnome2_src_prepare
+
+	# disable dependency chain buildup to dbus
+	eapply "${FILESDIR}"/gtk+-3-disable-atk-bridge.patch
 }
 
 multilib_src_configure() {
