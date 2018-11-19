@@ -16,3 +16,9 @@ RESTRICT="test"
 
 RDEPEND="dev-python/markdown x11-libs/wxGTK"
 DEPEND="${RDEPEND}"
+
+src_install() {
+	cmake-utils_src_install
+	doicon resources/wxlauncher.ico
+	make_desktop_entry wxlauncher "Freespace SCP Launcher"
+}
