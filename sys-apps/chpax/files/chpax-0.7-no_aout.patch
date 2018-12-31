@@ -1,0 +1,88 @@
+diff -Naur chpax-0.7.orig/Makefile chpax-0.7/Makefile
+--- chpax-0.7.orig/Makefile	2003-12-30 22:26:03.000000000 +0000
++++ chpax-0.7/Makefile	2018-12-31 19:39:18.709920318 +0000
+@@ -4,7 +4,7 @@
+ ## The PaX project : http://pax.grsecurity.net/
+ ##
+ 
+-SRC	= chpax.c io.c elf32.c elf64.c aout.c flags.c
++SRC	= chpax.c io.c elf32.c elf64.c flags.c
+ OBJ	= $(SRC:.c=.o)
+ RM	= rm -f 
+ TARGET	= chpax
+diff -Naur chpax-0.7.orig/aout.c chpax-0.7/aout.c
+--- chpax-0.7.orig/aout.c	2003-12-30 22:26:03.000000000 +0000
++++ chpax-0.7/aout.c	1970-01-01 00:00:00.000000000 +0000
+@@ -1,18 +0,0 @@
+-/*
+-** aout.c for chpax
+-**
+-** The PaX project : http://pax.grsecurity.net/
+-**
+-*/
+-#include "chpax.h"
+-
+-
+-unsigned long	get_flags_aout()
+-{
+-  return (N_FLAGS(header_aout));
+-}
+-
+-void		put_flags_aout(unsigned long flags)
+-{
+-  N_SET_FLAGS(header_aout, flags & ~HF_PAX_RANDMMAP);
+-}
+diff -Naur chpax-0.7.orig/chpax.c chpax-0.7/chpax.c
+--- chpax-0.7.orig/chpax.c	2004-06-22 09:57:14.000000000 +0000
++++ chpax-0.7/chpax.c	2018-12-31 19:41:59.380937522 +0000
+@@ -16,7 +16,6 @@
+ 
+ Elf32_Ehdr		header_elf;
+ Elf64_Ehdr		header_elf64;
+-struct exec		header_aout;
+ int			header_size;
+ void			*header;
+ int			fd;
+diff -Naur chpax-0.7.orig/chpax.h chpax-0.7/chpax.h
+--- chpax-0.7.orig/chpax.h	2004-06-22 09:57:14.000000000 +0000
++++ chpax-0.7/chpax.h	2018-12-31 19:42:04.676798246 +0000
+@@ -54,7 +54,6 @@
+ /* Extern variables */
+ extern Elf32_Ehdr		header_elf;
+ extern Elf64_Ehdr		header_elf64;
+-extern struct exec		header_aout;
+ extern int			header_size;
+ extern void			*header;
+ extern int			fd;
+diff -Naur chpax-0.7.orig/io.c chpax-0.7/io.c
+--- chpax-0.7.orig/io.c	2004-06-22 09:58:59.000000000 +0000
++++ chpax-0.7/io.c	2018-12-31 19:43:19.488838495 +0000
+@@ -33,7 +33,7 @@
+      }
+    while (size > 0);
+    
+-   memcpy(&header_aout, &header_elf64, sizeof(header_aout));
++   //memcpy(&header_aout, &header_elf64, sizeof(header_aout));
+    memcpy(&header_elf, &header_elf64, sizeof(header_elf));
+    
+    if (!memcmp(header_elf64.e_ident, ELFMAG, SELFMAG) && FILE_IS_ELF64(header_elf64))
+@@ -71,19 +71,6 @@
+ 	put_flags = put_flags_elf;
+      }
+    
+-   else if (N_MAGIC(header_aout) == NMAGIC ||
+-	    N_MAGIC(header_aout) == ZMAGIC ||
+-	    N_MAGIC(header_aout) == QMAGIC)
+-     {
+-       
+-       if (N_MACHTYPE(header_aout) != M_386)
+-	 return 3;
+-       header = &header_aout;
+-       header_size = 4;
+-       get_flags = get_flags_aout; 
+-       put_flags = put_flags_aout;
+-     }
+-   
+    else
+      return (2);
+    
