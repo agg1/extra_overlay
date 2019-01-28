@@ -51,7 +51,6 @@ RDEPEND="
 		media-libs/gst-plugins-bad:1.0
 		media-libs/gst-plugins-ugly:1.0
 		media-plugins/gst-plugins-a52dec:1.0
-		media-plugins/gst-plugins-libav:1.0
 		media-plugins/gst-plugins-x264:1.0
 	)
 	gtk? (
