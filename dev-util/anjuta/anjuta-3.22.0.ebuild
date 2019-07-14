@@ -6,10 +6,10 @@ GNOME2_LA_PUNT="yes"
 PYTHON_COMPAT=( python2_7 )
 # libanjuta-language-vala.so links to a specific slot of libvala; we want to
 # avoid automagic behavior.
-VALA_MIN_API_VERSION="0.32"
+VALA_MIN_API_VERSION="0.40"
 VALA_MAX_API_VERSION="${VALA_MIN_API_VERSION}"
 
-inherit gnome2 flag-o-matic readme.gentoo-r1 python-single-r1 vala
+inherit autotools gnome2 flag-o-matic readme.gentoo-r1 python-single-r1 vala
 
 DESCRIPTION="A versatile IDE for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Anjuta"
