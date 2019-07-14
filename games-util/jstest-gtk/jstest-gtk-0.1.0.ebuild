@@ -13,7 +13,7 @@ IUSE=""
 
 RESTRICT="test"
 
-RDEPEND="games-util/joystick x11-libs/gtk+:2"
+RDEPEND="games-util/joystick x11-libs/gtk+:2 dev-cpp/gtkmm"
 DEPEND="${RDEPEND}"
 
 cmake-utils_src_install() {
