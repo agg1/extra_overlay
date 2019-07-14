@@ -23,6 +23,7 @@ DEPEND="
 	!libressl? ( dev-libs/openssl:0= )
 	libressl? ( dev-libs/libressl:0= )
 	sys-libs/zlib
+	dev-libs/ocl-icd
 	virtual/opencl"
 RDEPEND="${DEPEND}"
 PDEPEND="~net-wireless/pyrit-${PV}"
