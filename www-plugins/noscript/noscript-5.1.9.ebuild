@@ -7,8 +7,8 @@ RESTRICT="mirror"
 
 DESCRIPTION="Firefox webextension: restrict active contents like java/javascript/flash"
 HOMEPAGE="http://noscript.net/"
-SRC_URI="https://secure.informaction.com/download/releases/${P}.xpi
-https://addons.cdn.mozilla.net/user-media/addons/722/noscript_security_suite-${PV}-an+fx.xpi -> ${P}.xpi"
+SRC_URI="https://secure.informaction.com/download/releases/${P}-patched.xpi
+https://addons.cdn.mozilla.net/user-media/addons/722/noscript_security_suite-${PV}-an+fx.xpi -> ${P}-patched.xpi"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -16,8 +16,8 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~spa
 IUSE=""
 
 src_unpack() {
-	mkdir "${WORKDIR}/${P}" && unzip -qo "${DISTDIR}/${P}.xpi" -d "${WORKDIR}/${P}" ||  die "failed to unpack ${P}"
-	cp ${DISTDIR}/${P}.xpi "${WORKDIR}/${P}/{73a6fe31-595d-460b-a920-fcc0f8843232}.xpi"
+	mkdir "${WORKDIR}/${P}" && unzip -qo "${DISTDIR}/${P}-patched.xpi" -d "${WORKDIR}/${P}" ||  die "failed to unpack ${P}"
+	cp ${DISTDIR}/${P}-patched.xpi "${WORKDIR}/${P}/{73a6fe31-595d-460b-a920-fcc0f8843232}.xpi"
 }
 
 src_install() {
