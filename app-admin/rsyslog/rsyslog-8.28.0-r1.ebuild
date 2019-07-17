@@ -305,6 +305,7 @@ src_install() {
 	newins "${FILESDIR}/${BRANCH}/00-syslog.conf" 00-syslog.conf
 	newins "${FILESDIR}/${BRANCH}/30-systrace.conf" 30-systrace.conf
 	newins "${FILESDIR}/${BRANCH}/40-iptables.conf" 40-iptables.conf
+	newins "${FILESDIR}/${BRANCH}/41-wxprot.conf" 41-wxprot.conf
 	newins "${FILESDIR}/${BRANCH}/80-sshauth.conf" 80-sshauth.conf
 
 	insinto /etc/logrotate.d/

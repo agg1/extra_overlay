@@ -9,6 +9,7 @@
 /var/log/debug.log
 /var/log/messages
 /var/log/iptables.log
+/var/log/wxprot.log
 {
 	olddir /var/log/archive
 	rotate 730
