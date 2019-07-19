@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -6,26 +6,19 @@ EAPI="6"
 PYTHON_COMPAT=( python2_7 )
 DISTUTILS_OPTIONAL=1
 
-inherit toolchain-funcs distutils-r1 flag-o-matic autotools
+inherit toolchain-funcs distutils-r1 flag-o-matic
 
 DESCRIPTION="WLAN tools for breaking 802.11 WEP/WPA keys"
 HOMEPAGE="http://www.aircrack-ng.org"
 
-if [[ ${PV} == "9999" ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/aircrack-ng/aircrack-ng.git"
-	KEYWORDS=""
-else
-	MY_PV=${PV/_/-}
-	SRC_URI="https://github.com/aircrack-ng/aircrack-ng/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~arm ~ppc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux"
-	S="${WORKDIR}/${PN}-${MY_PV}"
-fi
+MY_PV=${PV/_/-}
+SRC_URI="http://download.${PN}.org/${PN}-${MY_PV}.tar.gz"
+KEYWORDS="~amd64 ~arm ~ppc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux"
 
 LICENSE="GPL-2"
 SLOT="0"
 
-IUSE="+airdrop-ng +airgraph-ng kernel_linux kernel_FreeBSD +netlink +pcre +sqlite +experimental libressl"
+IUSE="+airdrop-ng +airgraph-ng kernel_linux kernel_FreeBSD libressl +netlink +pcre +sqlite +experimental"
 
 DEPEND="net-libs/libpcap
 	!libressl? ( dev-libs/openssl:0= )
@@ -36,8 +29,8 @@ DEPEND="net-libs/libpcap
 	airgraph-ng? ( ${PYTHON_DEPS} )
 	experimental? ( sys-libs/zlib )
 	sqlite? ( >=dev-db/sqlite-3.4 )"
-RDEPEND="${DEPEND}"
-PDEPEND="kernel_linux? (
+RDEPEND="${DEPEND}
+	kernel_linux? (
 		net-wireless/iw
 		net-wireless/wireless-tools
 		sys-apps/ethtool
@@ -49,6 +42,12 @@ PDEPEND="kernel_linux? (
 REQUIRED_USE="airdrop-ng? ( ${PYTHON_REQUIRED_USE} )
 		airgraph-ng? ( ${PYTHON_REQUIRED_USE} )"
 
+PATCHES=(
+	"${FILESDIR}/${P}-openssl.patch"
+)
+
+S="${WORKDIR}/${PN}-${MY_PV}"
+
 pkg_setup() {
 	MAKE_COMMON=(
 		CC="$(tc-getCC)" \
@@ -56,24 +55,12 @@ pkg_setup() {
 		AR="$(tc-getAR)" \
 		LD="$(tc-getLD)" \
 		RANLIB="$(tc-getRANLIB)" \
-		DESTDIR="${ED}"
+		libnl=$(usex netlink true false) \
+		pcre=$(usex pcre true false) \
+		sqlite=$(usex sqlite true false) \
+		experimental=$(usex experimental true false)
+		prefix="${ED}/usr" \
 	)
-}
-
-src_prepare() {
-	eapply_user
-	eautoreconf
-}
-
-src_configure() {
-	econf \
-		--disable-asan \
-		$(use_enable netlink libnl) \
-		$(use_with experimental) \
-		$(use_with sqlite sqlite3) \
-		--enable-shared \
-		--disable-static \
-		--without-opt
 }
 
 src_compile() {
