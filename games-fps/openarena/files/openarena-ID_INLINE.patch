@@ -1,0 +1,39 @@
+diff -Naur openarena-engine-source-0.8.8.orig/code/botlib/be_aas_route.c openarena-engine-source-0.8.8/code/botlib/be_aas_route.c
+--- openarena-engine-source-0.8.8.orig/code/botlib/be_aas_route.c	2011-12-24 12:29:34.000000000 +0000
++++ openarena-engine-source-0.8.8/code/botlib/be_aas_route.c	2019-07-24 13:56:17.988608015 +0000
+@@ -106,7 +106,7 @@
+ // Returns:				-
+ // Changes Globals:		-
+ //===========================================================================
+-ID_INLINE int AAS_ClusterAreaNum(int cluster, int areanum)
++int AAS_ClusterAreaNum(int cluster, int areanum)
+ {
+ 	int side, areacluster;
+ 
+@@ -166,7 +166,7 @@
+ // Returns:				-
+ // Changes Globals:		-
+ //===========================================================================
+-ID_INLINE int AAS_TravelFlagForType_inline(int traveltype)
++int AAS_TravelFlagForType_inline(int traveltype)
+ {
+ 	int tfl;
+ 
+@@ -339,7 +339,7 @@
+ // Returns:				-
+ // Changes Globals:		-
+ //===========================================================================
+-ID_INLINE float AAS_RoutingTime(void)
++float AAS_RoutingTime(void)
+ {
+ 	return AAS_Time();
+ } //end of the function AAS_RoutingTime
+@@ -379,7 +379,7 @@
+ // Returns:				-
+ // Changes Globals:		-
+ //===========================================================================
+-ID_INLINE int AAS_AreaContentsTravelFlags_inline(int areanum)
++int AAS_AreaContentsTravelFlags_inline(int areanum)
+ {
+ 	return aasworld.areacontentstravelflags[areanum];
+ } //end of the function AAS_AreaContentsTravelFlags
