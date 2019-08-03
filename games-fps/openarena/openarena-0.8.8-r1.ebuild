@@ -27,6 +27,7 @@ RDEPEND="
 	curl? ( net-misc/curl )
 	openal? ( media-libs/openal )
 	vorbis? ( media-libs/libvorbis )
+	media-sound/mumble
 "
 DEPEND="${RDEPEND}
 	app-arch/unzip
@@ -51,7 +52,7 @@ src_compile() {
 
 	# enable voip, disable mumble
 	# also build always server and use smp by default
-	myopts="USE_INTERNAL_SPEEX=0 USE_VOIP=1 USE_MUMBLE=0
+	myopts="USE_INTERNAL_SPEEX=0 USE_VOIP=0 USE_MUMBLE=1
 		BUILD_SERVER=1 BUILD_CLIENT_SMP=1 USE_LOCAL_HEADERS=0"
 	use curl || myopts="${myopts} USE_CURL=0"
 	use openal || myopts="${myopts} USE_OPENAL=0"
