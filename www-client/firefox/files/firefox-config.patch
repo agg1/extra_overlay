@@ -1,0 +1,425 @@
+diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/browser/app/profile/firefox.js
+--- mozilla-1.9.2.orig/browser/app/profile/firefox.js	2012-03-06 14:45:22.000000000 +0000
++++ mozilla-1.9.2/browser/app/profile/firefox.js	2019-09-13 17:21:43.322683873 +0000
+@@ -49,6 +49,11 @@
+ #endif
+ 
+ pref("general.startup.browser", true);
++pref("signon.rememberSignons", false);
++pref("browser.cache.disk.capacity", 0);
++pref("browser.cache.disk.enable", true);
++pref("browser.cache.disk_cache_ssl", false);
++pref("browser.cache.memory.enable", false);
+ 
+ pref("browser.chromeURL","chrome://browser/content/");
+ pref("browser.hiddenWindowChromeURL", "chrome://browser/content/hiddenWindow.xul");
+@@ -70,12 +75,12 @@
+ 
+ // Preferences for the Get Add-ons pane
+ pref("extensions.getAddons.showPane", true);
+-pref("extensions.getAddons.browseAddons", "https://addons.mozilla.org/%LOCALE%/%APP%");
++pref("extensions.getAddons.browseAddons", "");
+ pref("extensions.getAddons.maxResults", 5);
+-pref("extensions.getAddons.recommended.browseURL", "https://addons.mozilla.org/%LOCALE%/%APP%/recommended");
+-pref("extensions.getAddons.recommended.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/list/featured/all/10/%OS%/%VERSION%?src=firefox");
+-pref("extensions.getAddons.search.browseURL", "https://addons.mozilla.org/%LOCALE%/%APP%/search?q=%TERMS%");
+-pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/%TERMS%/all/10/%OS%/%VERSION%?src=firefox");
++pref("extensions.getAddons.recommended.browseURL", "");
++pref("extensions.getAddons.recommended.url", "");
++pref("extensions.getAddons.search.browseURL", "");
++pref("extensions.getAddons.search.url", "");
+ 
+ // Blocklist preferences
+ pref("extensions.blocklist.enabled", true);
+@@ -83,11 +88,11 @@
+ // Controls what level the blocklist switches from warning about items to forcibly
+ // blocking them.
+ pref("extensions.blocklist.level", 2);
+-pref("extensions.blocklist.url", "https://addons.mozilla.org/blocklist/3/%APP_ID%/%APP_VERSION%/%PRODUCT%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/");
+-pref("extensions.blocklist.detailsURL", "https://www.mozilla.com/%LOCALE%/blocklist/");
++pref("extensions.blocklist.url", "");
++pref("extensions.blocklist.detailsURL", "");
+ 
+ // Dictionary download preference
+-pref("browser.dictionaries.download.url", "https://addons.mozilla.org/%LOCALE%/%APP%/dictionaries/");
++pref("browser.dictionaries.download.url", "");
+ 
+ // Update Timer Manager preferences
+ // Interval: When all registered timers should be checked (in milliseconds)
+@@ -100,7 +105,7 @@
+ // firefox-branding.js
+ 
+ // Whether or not app updates are enabled
+-pref("app.update.enabled", true);
++pref("app.update.enabled", false);
+ 
+ // This preference turns on app.update.mode and allows automatic download and
+ // install to take place. We use a separate boolean toggle for this to make
+@@ -122,7 +127,7 @@
+ pref("app.update.silent", false);
+ 
+ // Update service URL:
+-pref("app.update.url", "https://aus2.mozilla.org/update/3/%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
++pref("app.update.url", "");
+ // app.update.url.manual is in branding section
+ // app.update.url.details is in branding section
+ 
+@@ -160,12 +165,12 @@
+ //  extensions.{GUID}.update.url
+ //  .. etc ..
+ //
+-pref("extensions.update.enabled", true);
+-pref("extensions.update.url", "https://versioncheck.addons.mozilla.org/update/VersionCheck.php?reqVersion=%REQ_VERSION%&id=%ITEM_ID%&version=%ITEM_VERSION%&maxAppVersion=%ITEM_MAXAPPVERSION%&status=%ITEM_STATUS%&appID=%APP_ID%&appVersion=%APP_VERSION%&appOS=%APP_OS%&appABI=%APP_ABI%&locale=%APP_LOCALE%&currentAppVersion=%CURRENT_APP_VERSION%&updateType=%UPDATE_TYPE%");
++pref("extensions.update.enabled", false);
++pref("extensions.update.url", "");
+ pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
+                                             // Themes every day
+ // Non-symmetric (not shared by extensions) extension-specific [update] preferences
+-pref("extensions.getMoreThemesURL", "https://addons.mozilla.org/%LOCALE%/%APP%/getpersonas");
++pref("extensions.getMoreThemesURL", "");
+ pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
+ pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
+                                                 // restart.
+@@ -173,17 +178,20 @@
+ pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.name", "chrome://browser/locale/browser.properties");
+ pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
+ 
+-pref("xpinstall.whitelist.add", "addons.mozilla.org");
+-pref("xpinstall.whitelist.add.36", "getpersonas.com");
++//pref("xpinstall.whitelist.add", "addons.mozilla.org");
++//pref("xpinstall.whitelist.add.36", "getpersonas.com");
+ 
+-pref("lightweightThemes.update.enabled", true);
++pref("lightweightThemes.update.enabled", false);
+ 
+ pref("keyword.enabled", true);
+-pref("keyword.URL", "chrome://browser-region/locale/region.properties");
++pref("keyword.URL", "https://duckduckgo.com/?q=");
++pref("browser.urlbar.autocomplete.enabled", false);
++pref("browser.formfill.enable", false);
+ 
+ pref("general.useragent.locale", "@AB_CD@");
+ pref("general.skins.selectedSkin", "classic/1.0");
+-pref("general.useragent.extra.firefox", "@APP_UA_NAME@/@APP_VERSION@");
++//pref("general.useragent.extra.firefox", "@APP_UA_NAME@/@APP_VERSION@");
++pref("general.useragent.extra.firefox", "Firefox/5.0");
+ 
+ pref("general.smoothScroll", false);
+ #ifdef UNIX_BUT_NOT_MAC
+@@ -194,12 +202,12 @@
+ 
+ // Whether or not the application should check at startup each time if it 
+ // is the default browser.
+-pref("browser.shell.checkDefaultBrowser", true);
++pref("browser.shell.checkDefaultBrowser", false);
+ 
+ // 0 = blank, 1 = home (browser.startup.homepage), 2 = last visited page, 3 = resume previous browser session
+ // The behavior of option 3 is detailed at: http://wiki.mozilla.org/Session_Restore
+-pref("browser.startup.page",                1);
+-pref("browser.startup.homepage",            "resource:/browserconfig.properties");
++pref("browser.startup.page",                0);
++pref("browser.startup.homepage",            "about:blank");
+ 
+ pref("browser.enable_automatic_image_resizing", true);
+ pref("browser.chrome.site_icons", true);
+@@ -266,20 +274,22 @@
+ #else
+ pref("browser.download.folderList", 1);
+ #endif
+-pref("browser.download.manager.showAlertOnComplete", true);
+-pref("browser.download.manager.showAlertInterval", 2000);
++pref("browser.download.manager.showAlertOnComplete", false);
++pref("browser.download.manager.showAlertInterval", 5000);
+ pref("browser.download.manager.retention", 2);
+-pref("browser.download.manager.showWhenStarting", true);
++pref("browser.download.manager.showWhenStarting", false);
+ pref("browser.download.manager.closeWhenDone", false);
+ pref("browser.download.manager.focusWhenStarting", false);
+ pref("browser.download.manager.flashCount", 2);
+-pref("browser.download.manager.addToRecentDocs", true);
++pref("browser.download.manager.addToRecentDocs", false);
+ pref("browser.download.manager.quitBehavior", 0);
+-pref("browser.download.manager.scanWhenDone", true);
++pref("browser.download.manager.scanWhenDone", false);
+ pref("browser.download.manager.resumeOnWakeDelay", 10000);
+ 
++pref("browser.search.selectedEngine", "Wikipedia (en)");
++
+ // search engines URL
+-pref("browser.search.searchEnginesURL",      "https://addons.mozilla.org/%LOCALE%/%APP%/search-engines/");
++pref("browser.search.searchEnginesURL",      "");
+ 
+ // pointer to the default engine name
+ pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
+@@ -295,20 +305,20 @@
+ pref("browser.search.openintab", false);
+ 
+ // send ping to the server to update
+-pref("browser.search.update", true);
++pref("browser.search.update", false);
+ 
+ // disable logging for the search service update system by default
+ pref("browser.search.update.log", false);
+ 
+ // Check whether we need to perform engine updates every 6 hours
+-pref("browser.search.updateinterval", 6);
++pref("browser.search.updateinterval", 336);
+ 
+ // Whether or not microsummary and generator updates are enabled
+ pref("browser.microsummary.enabled", true);
+ pref("browser.microsummary.updateGenerators", true);
+ 
+ // enable search suggestions by default
+-pref("browser.search.suggest.enabled", true);
++pref("browser.search.suggest.enabled", false);
+ 
+ pref("browser.history.showSessions", false);
+ pref("browser.sessionhistory.max_entries", 50);
+@@ -412,7 +422,7 @@
+ pref("dom.disable_window_flip",                   true);
+ 
+ // popups.policy 1=allow,2=reject
+-pref("privacy.popups.policy",               1);
++pref("privacy.popups.policy",               2);
+ pref("privacy.popups.usecustom",            true);
+ pref("privacy.popups.firstTime",            true);
+ pref("privacy.popups.showBrowserMessage",   true);
+@@ -421,23 +431,23 @@
+ 
+ pref("privacy.clearOnShutdown.history",     true);
+ pref("privacy.clearOnShutdown.formdata",    true);
+-pref("privacy.clearOnShutdown.passwords",   false);
++pref("privacy.clearOnShutdown.passwords",   true);
+ pref("privacy.clearOnShutdown.downloads",   true);
+ pref("privacy.clearOnShutdown.cookies",     true);
+ pref("privacy.clearOnShutdown.cache",       true);
+ pref("privacy.clearOnShutdown.sessions",    true);
+-pref("privacy.clearOnShutdown.offlineApps", false);
+-pref("privacy.clearOnShutdown.siteSettings", false);
++pref("privacy.clearOnShutdown.offlineApps", true);
++pref("privacy.clearOnShutdown.siteSettings", true);
+ 
+ pref("privacy.cpd.history",                 true);
+ pref("privacy.cpd.formdata",                true);
+-pref("privacy.cpd.passwords",               false);
++pref("privacy.cpd.passwords",               true);
+ pref("privacy.cpd.downloads",               true);
+ pref("privacy.cpd.cookies",                 true);
+ pref("privacy.cpd.cache",                   true);
+ pref("privacy.cpd.sessions",                true);
+-pref("privacy.cpd.offlineApps",             false);
+-pref("privacy.cpd.siteSettings",            false);
++pref("privacy.cpd.offlineApps",             true);
++pref("privacy.cpd.siteSettings",            true);
+ 
+ // What default should we use for the time span in the sanitizer:
+ // 0 - Clear everything
+@@ -445,14 +455,14 @@
+ // 2 - Last 2 Hours
+ // 3 - Last 4 Hours
+ // 4 - Today
+-pref("privacy.sanitize.timeSpan", 1);
+-pref("privacy.sanitize.sanitizeOnShutdown", false);
++pref("privacy.sanitize.timeSpan", 0);
++pref("privacy.sanitize.sanitizeOnShutdown", true);
+ 
+ pref("privacy.sanitize.migrateFx3Prefs",    false);
+ 
+ pref("network.proxy.share_proxy_settings",  false); // use the same proxy settings for all protocols
+ 
+-pref("network.cookie.cookieBehavior", 0); // 0-Accept, 1-dontAcceptForeign, 2-dontUse
++pref("network.cookie.cookieBehavior", 1); // 0-Accept, 1-dontAcceptForeign, 2-dontUse
+ 
+ // l12n and i18n
+ pref("intl.accept_languages", "chrome://global/locale/intl.properties");
+@@ -570,7 +580,7 @@
+ pref("plugin.default_plugin_disabled", true);
+ 
+ // plugin finder service url
+-pref("pfs.datasource.url", "https://pfs.mozilla.org/plugins/PluginFinderService.php?mimetype=%PLUGIN_MIMETYPE%&appID=%APP_ID%&appVersion=%APP_VERSION%&clientOS=%CLIENT_OS%&chromeLocale=%CHROME_LOCALE%&appRelease=%APP_RELEASE%");
++pref("pfs.datasource.url", "");
+ 
+ // by default we show an infobar message when pages require plugins the user has not installed, or are outdated
+ pref("plugins.hide_infobar_for_missing_plugin", false);
+@@ -608,7 +618,7 @@
+ // 0 = spellcheck nothing
+ // 1 = check multi-line controls [default]
+ // 2 = check multi/single line controls
+-pref("layout.spellcheckDefault", 1);
++pref("layout.spellcheckDefault", 0);
+ 
+ pref("browser.send_pings", false);
+ 
+@@ -692,22 +702,22 @@
+ 
+ #ifdef MOZ_SAFE_BROWSING
+ // Safe browsing does nothing unless this pref is set
+-pref("browser.safebrowsing.enabled", true);
++pref("browser.safebrowsing.enabled", false);
+ 
+ // Prevent loading of pages identified as malware
+-pref("browser.safebrowsing.malware.enabled", true);
++pref("browser.safebrowsing.malware.enabled", false);
+ 
+ // Non-enhanced mode (local url lists) URL list to check for updates
+-pref("browser.safebrowsing.provider.0.updateURL", "http://safebrowsing.clients.google.com/safebrowsing/downloads?client={moz:client}&appver={moz:version}&pver=2.2");
++pref("browser.safebrowsing.provider.0.updateURL", "");
+ 
+ pref("browser.safebrowsing.dataProvider", 0);
+ 
+ // Does the provider name need to be localizable?
+ pref("browser.safebrowsing.provider.0.name", "Google");
+-pref("browser.safebrowsing.provider.0.lookupURL", "http://safebrowsing.clients.google.com/safebrowsing/lookup?sourceid=firefox-antiphish&features=TrustRank&client={moz:client}&appver={moz:version}&");
+-pref("browser.safebrowsing.provider.0.keyURL", "https://sb-ssl.google.com/safebrowsing/newkey?client={moz:client}&appver={moz:version}&pver=2.2");
+-pref("browser.safebrowsing.provider.0.reportURL", "http://safebrowsing.clients.google.com/safebrowsing/report?");
+-pref("browser.safebrowsing.provider.0.gethashURL", "http://safebrowsing.clients.google.com/safebrowsing/gethash?client={moz:client}&appver={moz:version}&pver=2.2");
++pref("browser.safebrowsing.provider.0.lookupURL", "");
++pref("browser.safebrowsing.provider.0.keyURL", "");
++pref("browser.safebrowsing.provider.0.reportURL", "");
++pref("browser.safebrowsing.provider.0.gethashURL", "");
+ 
+ // HTML report pages
+ pref("browser.safebrowsing.provider.0.reportGenericURL", "http://{moz:locale}.phish-generic.mozilla.com/?hl={moz:locale}");
+@@ -717,8 +727,8 @@
+ pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
+ 
+ // FAQ URLs
+-pref("browser.safebrowsing.warning.infoURL", "http://www.mozilla.com/%LOCALE%/%APP%/phishing-protection/");
+-pref("browser.geolocation.warning.infoURL", "http://www.mozilla.com/%LOCALE%/%APP%/geolocation/");
++pref("browser.safebrowsing.warning.infoURL", "");
++pref("browser.geolocation.warning.infoURL", "");
+ 
+ // Name of the about: page contributed by safebrowsing to handle display of error
+ // pages on phishing/malware hits.  (bug 399233)
+@@ -766,7 +776,7 @@
+ #ifdef WINCE
+ pref("browser.sessionstore.resume_from_crash", false);
+ #else
+-pref("browser.sessionstore.resume_from_crash", true);
++pref("browser.sessionstore.resume_from_crash", false);
+ #endif
+ pref("browser.sessionstore.resume_session_once", false);
+ 
+@@ -777,7 +787,7 @@
+ pref("browser.sessionstore.postdata", 0);
+ // on which sites to save text data, POSTDATA and cookies
+ // 0 = everywhere, 1 = unencrypted sites, 2 = nowhere
+-pref("browser.sessionstore.privacy_level", 1);
++pref("browser.sessionstore.privacy_level", 2);
+ // how many tabs can be reopened (per window)
+ pref("browser.sessionstore.max_tabs_undo", 10);
+ // how many windows can be reopened (per session) - on non-OS X platforms this
+@@ -825,13 +835,13 @@
+ // 0 - don't pre-populate anything
+ // 1 - pre-populate site URL, but don't fetch certificate
+ // 2 - pre-populate site URL and pre-fetch certificate
+-pref("browser.ssl_override_behavior", 2);
++pref("browser.ssl_override_behavior", 0);
+ 
+ // Controls the display of domain in the identity box for SSL connections.
+ // 0 - do not show domain
+ // 1 - show effectiveTLD + 1 (e.g. mozilla.org)
+ // 2 - show full domain (e.g. bugzilla.mozilla.org)
+-pref("browser.identity.ssl_domain_display", 1);
++pref("browser.identity.ssl_domain_display", 0);
+ 
+ // True if the user should be prompted when a web application supports
+ // offline apps.
+@@ -841,10 +851,10 @@
+ pref("browser.zoom.full", true);
+ 
+ // Whether or not to save and restore zoom levels on a per-site basis.
+-pref("browser.zoom.siteSpecific", true);
++pref("browser.zoom.siteSpecific", false);
+ 
+ // Whether or not to update background tabs to the current zoom level.
+-pref("browser.zoom.updateBackgroundTabs", true);
++pref("browser.zoom.updateBackgroundTabs", false);
+ 
+ // replace newlines with spaces when pasting into <input type="text"> fields
+ pref("editor.singleLine.pasteNewlines", 2);
+@@ -859,17 +869,17 @@
+ pref("security.alternate_certificate_error_page", "certerror");
+ 
+ // Whether to start the private browsing mode at application startup
+-pref("browser.privatebrowsing.autostart", false);
++pref("browser.privatebrowsing.autostart", true);
+ 
+ // Whether we should skip prompting before starting the private browsing mode
+-pref("browser.privatebrowsing.dont_prompt_on_enter", false);
++pref("browser.privatebrowsing.dont_prompt_on_enter", true);
+ 
+ // Don't try to alter this pref, it'll be reset the next time you use the
+ // bookmarking dialog
+ pref("browser.bookmarks.editDialog.firstEditField", "namePicker");
+ 
+ // base url for the wifi geolocation network provider
+-pref("geo.wifi.uri", "https://www.google.com/loc/json");
++pref("geo.wifi.uri", "");
+ 
+ #ifdef WINCE
+ 
+diff -Naur mozilla-1.9.2.orig/browser/branding/nightly/pref/firefox-branding.js mozilla-1.9.2/browser/branding/nightly/pref/firefox-branding.js
+--- mozilla-1.9.2.orig/browser/branding/nightly/pref/firefox-branding.js	2012-03-06 14:45:22.000000000 +0000
++++ mozilla-1.9.2/browser/branding/nightly/pref/firefox-branding.js	2019-09-13 17:23:25.201707768 +0000
+@@ -1,5 +1,5 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","about:blank");
++pref("startup.homepage_welcome_url","about:blank");
+ // The time interval between checks for a new version (in seconds)
+ // nightly=8 hours, official=24 hours
+ pref("app.update.interval", 28800);
+@@ -11,7 +11,7 @@
+ pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "");
+ 
+ // Release notes URL
+ pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
+diff -Naur mozilla-1.9.2.orig/browser/branding/unofficial/pref/firefox-branding.js mozilla-1.9.2/browser/branding/unofficial/pref/firefox-branding.js
+--- mozilla-1.9.2.orig/browser/branding/unofficial/pref/firefox-branding.js	2012-03-06 14:45:22.000000000 +0000
++++ mozilla-1.9.2/browser/branding/unofficial/pref/firefox-branding.js	2019-09-13 17:23:50.730463150 +0000
+@@ -1,5 +1,5 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","about:blank");
++pref("startup.homepage_welcome_url","about:blank");
+ // The time interval between checks for a new version (in seconds)
+ // nightly=8 hours, official=24 hours
+ pref("app.update.interval", 28800);
+diff -Naur mozilla-1.9.2.orig/other-licenses/branding/firefox/locales/browserconfig.properties mozilla-1.9.2/other-licenses/branding/firefox/locales/browserconfig.properties
+--- mozilla-1.9.2.orig/other-licenses/branding/firefox/locales/browserconfig.properties	2012-03-06 14:45:42.000000000 +0000
++++ mozilla-1.9.2/other-licenses/branding/firefox/locales/browserconfig.properties	2019-09-13 17:10:30.155128690 +0000
+@@ -1,3 +1,3 @@
+ # Do NOT localize or otherwise change these values
+-#expand browser.startup.homepage=http://__AB_CD__.start3.mozilla.com/firefox?client=firefox-a&rls=__MOZ_DISTRIBUTION_ID_UNQUOTED__:__AB_CD__:official
+-#expand browser.startup.homepage_reset=http://__AB_CD__.start3.mozilla.com/firefox?client=firefox-a&rls=__MOZ_DISTRIBUTION_ID_UNQUOTED__:__AB_CD__:official
++#expand browser.startup.homepage=about:blank
++#expand browser.startup.homepage_reset=about:blank
+diff -Naur mozilla-1.9.2.orig/other-licenses/branding/firefox/pref/firefox-branding.js mozilla-1.9.2/other-licenses/branding/firefox/pref/firefox-branding.js
+--- mozilla-1.9.2.orig/other-licenses/branding/firefox/pref/firefox-branding.js	2012-03-06 14:45:42.000000000 +0000
++++ mozilla-1.9.2/other-licenses/branding/firefox/pref/firefox-branding.js	2019-09-13 17:22:45.043092550 +0000
+@@ -1,5 +1,5 @@
+-pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","about:blank");
++pref("startup.homepage_welcome_url","about:blank");
+ // Interval: Time between checks for a new version (in seconds)
+ // nightly=6 hours, official=24 hours
+ pref("app.update.interval", 86400);
+@@ -11,10 +11,10 @@
+ pref("app.update.url.manual", "http://www.firefox.com");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.com/%LOCALE%/%APP%/releases/");
++pref("app.update.url.details", "");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.firefox.com");
+ 
+ pref("browser.search.param.yahoo-fr", "moz35");
+ pref("browser.search.param.yahoo-fr-cjkt", "moz35"); // now unused
