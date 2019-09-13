@@ -12,10 +12,10 @@ XUL_PV="${MAJ_XUL_PV}${MAJ_PV/${DESKTOP_PV}/}"
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="http://www.mozilla.com/firefox"
 
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~x86 ~amd64-linux ~ia64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm ~ia64 ~ppc ~ppc64 ~x86 ~amd64-linux ~ia64-linux ~x86-linux"
 SLOT="0"
 LICENSE="|| ( MPL-1.1 GPL-2 LGPL-2.1 )"
-IUSE="+alsa bindist +ipc system-sqlite"
+IUSE="alsa bindist ipc system-sqlite"
 
 REL_URI="http://releases.mozilla.org/pub/mozilla.org/firefox/releases"
 SRC_URI="${REL_URI}/${MY_PV}/source/firefox-${MY_PV}.source.tar.bz2"
@@ -54,10 +54,9 @@ src_prepare() {
 	EPATCH_FORCE="yes" \
 	epatch "${WORKDIR}"
 	epatch "${FILESDIR}"/firefox-3.6.patch
+	#epatch "${FILESDIR}"/firefox-config.patch
 
-	# Allow user to apply additional patches without modifing ebuild
 	epatch_user
-
 	eautoreconf
 
 	cd js/src
@@ -71,13 +70,9 @@ src_configure() {
 	mozconfig_init
 	mozconfig_config
 
-	# It doesn't compile on alpha without this LDFLAGS
-	use alpha && append-ldflags "-Wl,--no-relax"
-
 	mozconfig_annotate '' --disable-tests
 	mozconfig_annotate '' --disable-dbus
-	mozconfig_annotate '' --disable-crypto
-	#mozconfig_annotate '' --enable-crypto
+	mozconfig_annotate '' --enable-crypto
 	mozconfig_annotate '' --enable-extensions
 	#mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 	mozconfig_annotate '' --enable-application=browser
@@ -87,14 +82,11 @@ src_configure() {
 	mozconfig_annotate '' --without-system-png
 	mozconfig_annotate '' --enable-canvas
 	mozconfig_annotate 'gtk' --enable-default-toolkit=cairo-gtk2
-	# Bug 60668: Galeon doesn't build without oji enabled, so enable it
-	# regardless of java setting.
 	mozconfig_annotate '' --enable-oji --enable-mathml
 	mozconfig_annotate 'places' --enable-storage --enable-places
 	mozconfig_annotate '' --disable-safe-browsing
 
 	# Build mozdevelop permately
-	#mozconfig_annotate '' --enable-jsd --enable-xpctools
 	mozconfig_annotate '' --disable-jsd --disable-xpctools
 
 	# System-wide install specs
@@ -115,13 +107,21 @@ src_configure() {
 	#mozconfig_annotate '' --disable-xul
 
 	mozconfig_annotate '' --enable-optimize=-Os
+	mozconfig_annotate '' --enable-permissions
 	mozconfig_annotate '' --disable-jemalloc
 	mozconfig_annotate '' --disable-inspector-apis
+	#mozconfig_annotate '' --disable-jsloader
 	mozconfig_annotate '' --disable-javaxpcom
+	mozconfig_annotate '' --disable-xpcom-obsolete
+	mozconfig_annotate '' --disable-xpcom-fastload
+	mozconfig_annotate '' --disable-splashscreen
 	mozconfig_annotate '' --disable-ipc
 	#mozconfig_annotate '' --without-libIDL
 
-	#mozconfig_use_enable ipc # +ipc, upstream default
+	#mozconfig_annotate '' --disable-ogg
+	#mozconfig_annotate '' --disable-wave
+
+	#mozconfig_use_enable ipc
 	mozconfig_use_enable alsa ogg
 	mozconfig_use_enable alsa wave
 	mozconfig_use_enable system-sqlite
@@ -151,6 +151,7 @@ src_install() {
 	mozilla-${PN}-${DESKTOP_PV}.desktop
 
 	# Plugins dir
+	dodir ../nsbrowser/plugins
 	dosym ../nsbrowser/plugins "${MOZILLA_FIVE_HOME}"/plugins || die "failed to symlink"
 }
 
