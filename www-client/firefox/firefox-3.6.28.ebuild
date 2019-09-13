@@ -54,7 +54,7 @@ src_prepare() {
 	EPATCH_FORCE="yes" \
 	epatch "${WORKDIR}"
 	epatch "${FILESDIR}"/firefox-3.6.patch
-	#epatch "${FILESDIR}"/firefox-config.patch
+	epatch "${FILESDIR}"/firefox-config.patch
 
 	epatch_user
 	eautoreconf
