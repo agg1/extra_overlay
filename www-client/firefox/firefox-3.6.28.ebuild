@@ -73,7 +73,8 @@ src_configure() {
 	mozconfig_annotate '' --disable-tests
 	mozconfig_annotate '' --disable-dbus
 	mozconfig_annotate '' --enable-crypto
-	mozconfig_annotate '' --enable-extensions
+	mozconfig_annotate '' --disable-extensions
+	#mozconfig_annotate '' --enable-extensions
 	#mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 	mozconfig_annotate '' --enable-application=browser
 	mozconfig_annotate '' --disable-mailnews
