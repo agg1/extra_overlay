@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-DESCRIPTION="Utility for fast (even real-time) de/compression with 32bit LFSR scrambler"
+DESCRIPTION="Utility for fast (even real-time) de/compression with 64bit LFSR scrambler"
 HOMEPAGE="http://www.lzop.org/"
 SRC_URI="http://www.lzop.org/download/${P}.tar.gz"
 
