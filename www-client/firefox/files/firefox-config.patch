@@ -1,6 +1,6 @@
 diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/browser/app/profile/firefox.js
 --- mozilla-1.9.2.orig/browser/app/profile/firefox.js	2012-03-06 14:45:22.000000000 +0000
-+++ mozilla-1.9.2/browser/app/profile/firefox.js	2019-09-13 17:21:43.322683873 +0000
++++ mozilla-1.9.2/browser/app/profile/firefox.js	2019-09-20 09:21:41.004031175 +0000
 @@ -49,6 +49,11 @@
  #endif
  
@@ -175,7 +175,26 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  pref("browser.history.showSessions", false);
  pref("browser.sessionhistory.max_entries", 50);
-@@ -412,7 +422,7 @@
+@@ -375,13 +385,16 @@
+ // By default, do not export HTML at shutdown.
+ // If true, at shutdown the bookmarks in your menu and toolbar will
+ // be exported as HTML to the bookmarks.html file.
+-pref("browser.bookmarks.autoExportHTML",          false);
++pref("browser.bookmarks.autoExportHTML",          true);
+ 
+ // The maximum number of daily bookmark backups to 
+ // keep in {PROFILEDIR}/bookmarkbackups. Special values:
+ // -1: unlimited
+ //  0: no backups created (and deletes all existing backups)
+-pref("browser.bookmarks.max_backups",             5);
++pref("browser.bookmarks.max_backups",             -1);
++
++// disable javascript by default
++pref("javascript.enabled", false);
+ 
+ // Scripts & Windows prefs
+ pref("dom.disable_open_during_load",              true);
+@@ -412,7 +425,7 @@
  pref("dom.disable_window_flip",                   true);
  
  // popups.policy 1=allow,2=reject
@@ -184,7 +203,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  pref("privacy.popups.usecustom",            true);
  pref("privacy.popups.firstTime",            true);
  pref("privacy.popups.showBrowserMessage",   true);
-@@ -421,23 +431,23 @@
+@@ -421,23 +434,23 @@
  
  pref("privacy.clearOnShutdown.history",     true);
  pref("privacy.clearOnShutdown.formdata",    true);
@@ -214,7 +233,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // What default should we use for the time span in the sanitizer:
  // 0 - Clear everything
-@@ -445,14 +455,14 @@
+@@ -445,14 +458,14 @@
  // 2 - Last 2 Hours
  // 3 - Last 4 Hours
  // 4 - Today
@@ -232,7 +251,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // l12n and i18n
  pref("intl.accept_languages", "chrome://global/locale/intl.properties");
-@@ -570,7 +580,7 @@
+@@ -570,7 +583,7 @@
  pref("plugin.default_plugin_disabled", true);
  
  // plugin finder service url
@@ -241,7 +260,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // by default we show an infobar message when pages require plugins the user has not installed, or are outdated
  pref("plugins.hide_infobar_for_missing_plugin", false);
-@@ -608,7 +618,7 @@
+@@ -608,7 +621,7 @@
  // 0 = spellcheck nothing
  // 1 = check multi-line controls [default]
  // 2 = check multi/single line controls
@@ -250,7 +269,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  pref("browser.send_pings", false);
  
-@@ -692,22 +702,22 @@
+@@ -692,22 +705,22 @@
  
  #ifdef MOZ_SAFE_BROWSING
  // Safe browsing does nothing unless this pref is set
@@ -280,7 +299,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // HTML report pages
  pref("browser.safebrowsing.provider.0.reportGenericURL", "http://{moz:locale}.phish-generic.mozilla.com/?hl={moz:locale}");
-@@ -717,8 +727,8 @@
+@@ -717,8 +730,8 @@
  pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
  
  // FAQ URLs
@@ -291,7 +310,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // Name of the about: page contributed by safebrowsing to handle display of error
  // pages on phishing/malware hits.  (bug 399233)
-@@ -766,7 +776,7 @@
+@@ -766,7 +779,7 @@
  #ifdef WINCE
  pref("browser.sessionstore.resume_from_crash", false);
  #else
@@ -300,7 +319,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  #endif
  pref("browser.sessionstore.resume_session_once", false);
  
-@@ -777,7 +787,7 @@
+@@ -777,7 +790,7 @@
  pref("browser.sessionstore.postdata", 0);
  // on which sites to save text data, POSTDATA and cookies
  // 0 = everywhere, 1 = unencrypted sites, 2 = nowhere
@@ -309,7 +328,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  // how many tabs can be reopened (per window)
  pref("browser.sessionstore.max_tabs_undo", 10);
  // how many windows can be reopened (per session) - on non-OS X platforms this
-@@ -825,13 +835,13 @@
+@@ -825,13 +838,13 @@
  // 0 - don't pre-populate anything
  // 1 - pre-populate site URL, but don't fetch certificate
  // 2 - pre-populate site URL and pre-fetch certificate
@@ -325,7 +344,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // True if the user should be prompted when a web application supports
  // offline apps.
-@@ -841,10 +851,10 @@
+@@ -841,10 +854,10 @@
  pref("browser.zoom.full", true);
  
  // Whether or not to save and restore zoom levels on a per-site basis.
@@ -338,7 +357,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
  // replace newlines with spaces when pasting into <input type="text"> fields
  pref("editor.singleLine.pasteNewlines", 2);
-@@ -859,17 +869,17 @@
+@@ -859,17 +872,17 @@
  pref("security.alternate_certificate_error_page", "certerror");
  
  // Whether to start the private browsing mode at application startup
@@ -361,7 +380,7 @@ diff -Naur mozilla-1.9.2.orig/browser/app/profile/firefox.js mozilla-1.9.2/brows
  
 diff -Naur mozilla-1.9.2.orig/browser/branding/nightly/pref/firefox-branding.js mozilla-1.9.2/browser/branding/nightly/pref/firefox-branding.js
 --- mozilla-1.9.2.orig/browser/branding/nightly/pref/firefox-branding.js	2012-03-06 14:45:22.000000000 +0000
-+++ mozilla-1.9.2/browser/branding/nightly/pref/firefox-branding.js	2019-09-13 17:23:25.201707768 +0000
++++ mozilla-1.9.2/browser/branding/nightly/pref/firefox-branding.js	2019-09-20 09:16:50.175998606 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -381,7 +400,7 @@ diff -Naur mozilla-1.9.2.orig/browser/branding/nightly/pref/firefox-branding.js 
  pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
 diff -Naur mozilla-1.9.2.orig/browser/branding/unofficial/pref/firefox-branding.js mozilla-1.9.2/browser/branding/unofficial/pref/firefox-branding.js
 --- mozilla-1.9.2.orig/browser/branding/unofficial/pref/firefox-branding.js	2012-03-06 14:45:22.000000000 +0000
-+++ mozilla-1.9.2/browser/branding/unofficial/pref/firefox-branding.js	2019-09-13 17:23:50.730463150 +0000
++++ mozilla-1.9.2/browser/branding/unofficial/pref/firefox-branding.js	2019-09-20 09:16:50.175998606 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -392,7 +411,7 @@ diff -Naur mozilla-1.9.2.orig/browser/branding/unofficial/pref/firefox-branding.
  pref("app.update.interval", 28800);
 diff -Naur mozilla-1.9.2.orig/other-licenses/branding/firefox/locales/browserconfig.properties mozilla-1.9.2/other-licenses/branding/firefox/locales/browserconfig.properties
 --- mozilla-1.9.2.orig/other-licenses/branding/firefox/locales/browserconfig.properties	2012-03-06 14:45:42.000000000 +0000
-+++ mozilla-1.9.2/other-licenses/branding/firefox/locales/browserconfig.properties	2019-09-13 17:10:30.155128690 +0000
++++ mozilla-1.9.2/other-licenses/branding/firefox/locales/browserconfig.properties	2019-09-20 09:16:50.175998606 +0000
 @@ -1,3 +1,3 @@
  # Do NOT localize or otherwise change these values
 -#expand browser.startup.homepage=http://__AB_CD__.start3.mozilla.com/firefox?client=firefox-a&rls=__MOZ_DISTRIBUTION_ID_UNQUOTED__:__AB_CD__:official
@@ -401,7 +420,7 @@ diff -Naur mozilla-1.9.2.orig/other-licenses/branding/firefox/locales/browsercon
 +#expand browser.startup.homepage_reset=about:blank
 diff -Naur mozilla-1.9.2.orig/other-licenses/branding/firefox/pref/firefox-branding.js mozilla-1.9.2/other-licenses/branding/firefox/pref/firefox-branding.js
 --- mozilla-1.9.2.orig/other-licenses/branding/firefox/pref/firefox-branding.js	2012-03-06 14:45:42.000000000 +0000
-+++ mozilla-1.9.2/other-licenses/branding/firefox/pref/firefox-branding.js	2019-09-13 17:22:45.043092550 +0000
++++ mozilla-1.9.2/other-licenses/branding/firefox/pref/firefox-branding.js	2019-09-20 09:16:50.175998606 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
