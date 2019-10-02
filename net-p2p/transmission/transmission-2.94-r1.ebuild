@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit autotools flag-o-matic gnome2-utils qmake-utils systemd user xdg-utils
+inherit autotools flag-o-matic gnome2-utils qmake-utils systemd xdg-utils
 
 DESCRIPTION="A Fast, Easy and Free BitTorrent client"
 HOMEPAGE="http://www.transmissionbt.com/"
@@ -13,10 +13,14 @@ SRC_URI="https://github.com/transmission/transmission-releases/raw/master/${P}.t
 # MIT is in several libtransmission/ headers
 LICENSE="|| ( GPL-2 GPL-3 Transmission-OpenSSL-exception ) GPL-2 MIT"
 SLOT=0
-IUSE="ayatana gtk libressl lightweight systemd xfs"
+IUSE="ayatana gtk libressl lightweight systemd qt5 xfs"
 KEYWORDS="amd64 ~arm ~arm64 ~mips ppc ppc64 x86 ~x86-fbsd ~amd64-linux"
 
-RDEPEND=">=dev-libs/libevent-2.0.10:=
+ACCT_DEPEND="
+	acct-group/transmission
+	acct-user/transmission
+"
+COMMON_DEPEND=">=dev-libs/libevent-2.0.10:=
 	!libressl? ( dev-libs/openssl:0= )
 	libressl? ( dev-libs/libressl:0= )
 	net-libs/libnatpmp
@@ -28,14 +32,25 @@ RDEPEND=">=dev-libs/libevent-2.0.10:=
 		>=x11-libs/gtk+-3.4:3
 		ayatana? ( >=dev-libs/libappindicator-0.4.90:3 )
 		)
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtdbus:5
+		dev-qt/qtgui:5
+		dev-qt/qtnetwork:5
+		dev-qt/qtwidgets:5
+		)
 	systemd? ( >=sys-apps/systemd-209:= )"
-DEPEND="${RDEPEND}
+DEPEND="${COMMON_DEPEND}
+	${ACCT_DEPEND}
 	>=dev-libs/glib-2.32
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/os-headers
 	virtual/pkgconfig
+	qt5? ( dev-qt/linguist-tools:5 )
 	xfs? ( sys-fs/xfsprogs )"
+RDEPEND="${COMMON_DEPEND}
+	${ACCT_DEPEND}"
 
 REQUIRED_USE="ayatana? ( gtk )"
 
@@ -75,10 +90,21 @@ src_configure() {
 		$(use_enable lightweight) \
 		$(use_with systemd systemd-daemon) \
 		$(use_with gtk)
+
+	if use qt5; then
+		pushd qt >/dev/null || die
+		eqmake5 qtr.pro
+		popd >/dev/null || die
+	fi
 }
 
 src_compile() {
 	emake
+
+	if use qt5; then
+		emake -C qt
+		$(qt5_get_bindir)/lrelease qt/translations/*.ts || die
+	fi
 }
 
 src_install() {
@@ -90,6 +116,29 @@ src_install() {
 	newconfd "${FILESDIR}"/transmission-daemon.confd.4 transmission-daemon
 	systemd_dounit daemon/transmission-daemon.service
 	systemd_install_serviced "${FILESDIR}"/transmission-daemon.service.conf
+
+	insinto /usr/lib/sysctl.d
+	doins "${FILESDIR}"/60-transmission.conf
+
+	if use qt5; then
+		pushd qt >/dev/null || die
+		emake INSTALL_ROOT="${ED%/}"/usr install
+
+		domenu transmission-qt.desktop
+
+		local res
+		for res in 16 22 24 32 48 64 72 96 128 192 256; do
+			doicon -s ${res} icons/hicolor/${res}x${res}/transmission-qt.png
+		done
+		doicon -s scalable icons/hicolor/scalable/transmission-qt.svg
+
+		insinto /usr/share/qt5/translations
+		doins translations/*.qm
+		popd >/dev/null || die
+	fi
+
+	diropts -o transmission -g transmission
+	keepdir /var/lib/transmission
 }
 
 pkg_preinst() {
@@ -99,25 +148,6 @@ pkg_preinst() {
 pkg_postinst() {
 	xdg_desktop_database_update
 	gnome2_icon_cache_update
-
-	enewgroup transmission
-	enewuser transmission -1 -1 /var/lib/transmission transmission
-
-	if [[ ! -e "${EROOT%/}"/var/lib/transmission ]]; then
-		mkdir -p "${EROOT%/}"/var/lib/transmission || die
-		chown transmission:transmission "${EROOT%/}"/var/lib/transmission || die
-	fi
-
-	elog "If you use transmission-daemon, please, set 'rpc-username' and"
-	elog "'rpc-password' (in plain text, transmission-daemon will hash it on"
-	elog "start) in settings.json file located at /var/lib/transmission/config or"
-	elog "any other appropriate config directory."
-	elog
-	elog "Since µTP is enabled by default, transmission needs large kernel buffers for"
-	elog "the UDP socket. You can append following lines into /etc/sysctl.conf:"
-	elog " net.core.rmem_max = 4194304"
-	elog " net.core.wmem_max = 1048576"
-	elog "and run sysctl -p"
 }
 
 pkg_postrm() {
