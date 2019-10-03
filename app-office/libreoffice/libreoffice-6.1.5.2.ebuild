@@ -454,6 +454,7 @@ src_configure() {
 		$(use_with java)
 		$(use_with mysql system-mysql-cppconn)
 		$(use_with odk doxygen)
+		--enable-pch
 	)
 
 	if use eds || use gtk; then
