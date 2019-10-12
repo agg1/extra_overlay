@@ -70,12 +70,12 @@ src_configure() {
 		$(use_enable isac-float) \
 		$(use_enable isac-fixed) \
 		$(use_with postgres libpq) \
-		$(use_with mysql) \
 		$(use_with gsm libgsm) \
 		$(use_with speex libspeex) \
 		$(use_with amrnb) \
 		$(use_with spandsp) \
-		$(use_with ssl openssl)
+		$(use_with ssl openssl) \
+		--without-mysql
 }
 
 src_compile() {

@@ -86,6 +86,7 @@ src_configure() {
 	mozconfig_annotate '' --enable-oji --enable-mathml
 	mozconfig_annotate 'places' --enable-storage --enable-places
 	mozconfig_annotate '' --disable-safe-browsing
+	mozconfig_annotate '' --disable-libnotify
 
 	# Build mozdevelop permately
 	mozconfig_annotate '' --disable-jsd --disable-xpctools
@@ -119,12 +120,13 @@ src_configure() {
 	mozconfig_annotate '' --disable-ipc
 	#mozconfig_annotate '' --without-libIDL
 
-	#mozconfig_annotate '' --disable-ogg
-	#mozconfig_annotate '' --disable-wave
+	mozconfig_annotate '' --disable-ogg
+	mozconfig_annotate '' --disable-wave
+	mozconfig_annotate '' --disable-alsa
 
 	#mozconfig_use_enable ipc
-	mozconfig_use_enable alsa ogg
-	mozconfig_use_enable alsa wave
+	#mozconfig_use_enable alsa ogg
+	#mozconfig_use_enable alsa wave
 	mozconfig_use_enable system-sqlite
 	mozconfig_use_enable !bindist official-branding
 

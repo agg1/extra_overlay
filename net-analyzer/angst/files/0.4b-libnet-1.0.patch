@@ -1,0 +1,20 @@
+--- Makefile.linux.orig	2003-08-19 01:22:26.737300264 -0400
++++ Makefile.linux	2003-08-19 01:22:26.745299048 -0400
+@@ -14,2 +14,2 @@
+-LIBS = -L/usr/local/lib `libnet-config --libs` -lpcap
+-DEFINE = `libnet-config --defines` -DLINUX #-DDEBUG
++LIBS = -L/usr/local/lib `libnet-1.0-config --libs` -lpcap
++DEFINE = `libnet-1.0-config --defines` -DLINUX #-DDEBUG
+--- angst.h.orig        2001-02-05 03:22:57.000000000 +0000
++++ angst.h     2019-10-07 22:30:06.566272339 +0000
+@@ -8,8 +8,8 @@
+ 
+ #include <stdarg.h>
+ #include <sys/param.h>
+-#include <sys/sysctl.h>
+-#include <libnet.h>
++#include <linux/sysctl.h>
++#include <libnet-1.0.h>
+ #include <pcap.h>
+ 
+ /* the default bpf program expression, if you change it and you want

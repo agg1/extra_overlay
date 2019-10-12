@@ -1,0 +1,51 @@
+diff -Naur systrace-1.6f.orig/systrace.c systrace-1.6f/systrace.c
+--- systrace-1.6f.orig/systrace.c	2009-01-07 03:24:17.000000000 +0000
++++ systrace-1.6f/systrace.c	2019-10-08 03:01:26.593913643 +0000
+@@ -46,7 +46,8 @@
+ #endif /* HAVE_SYS_TIME_H */
+ #include <limits.h>
+ #ifdef __linux__
+-#include <bits/posix1_lim.h>
++//#include <bits/posix1_lim.h>
++#include <limits.h>
+ #ifndef LOGIN_NAME_MAX
+ #define LOGIN_NAME_MAX _POSIX_LOGIN_NAME_MAX
+ #endif
+diff -Naur systrace-1.6f.orig/configure.in systrace-1.6f/configure.in
+--- systrace-1.6f.orig/configure.in	2009-01-07 03:24:17.000000000 +0000
++++ systrace-1.6f/configure.in	2019-10-08 03:47:24.742285396 +0000
+@@ -92,8 +92,8 @@
+ AC_CHECK_TYPE(u_int32_t, unsigned int)
+ AC_CHECK_TYPE(u_int16_t, unsigned short)
+ AC_CHECK_TYPE(u_int8_t, unsigned char)
+-AC_CHECK_TYPE(in_addr_t, unsigned long)
+-AC_CHECK_TYPE(socklen_t, unsigned int)
++#AC_CHECK_TYPE(in_addr_t, unsigned long)
++#AC_CHECK_TYPE(socklen_t, unsigned int)
+ 
+ dnl Checks for library functions.
+ AC_PROG_GCC_TRADITIONAL
+diff -Naur systrace-1.6f.orig/parse.y systrace-1.6f/parse.y
+--- systrace-1.6f.orig/parse.y	2008-12-07 01:30:28.000000000 +0000
++++ systrace-1.6f/parse.y	2019-10-08 03:48:31.941586812 +0000
+@@ -47,7 +47,7 @@
+ #include <regex.h>
+ 
+ #ifdef __linux__
+-#include <bits/posix1_lim.h>
++#include <limits.h>
+ #define MAXLOGNAME _POSIX_LOGIN_NAME_MAX
+ #endif /* __linux__ */
+ 
+diff -Naur systrace-1.6f.orig/cradle.c systrace-1.6f/cradle.c
+--- systrace-1.6f.orig/cradle.c	2008-12-07 01:30:28.000000000 +0000
++++ systrace-1.6f/cradle.c	2019-10-08 03:51:19.099849585 +0000
+@@ -44,7 +44,7 @@
+ #include <unistd.h>
+ #include <limits.h>
+ #ifdef __linux__
+-#include <bits/posix1_lim.h>
++#include <limits.h>
+ #ifndef LOGIN_NAME_MAX
+ #define LOGIN_NAME_MAX _POSIX_LOGIN_NAME_MAX
+ #endif
