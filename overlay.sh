@@ -5,4 +5,5 @@ echo 'extra' > extra_overlay/profiles/repo_name
 echo 'masters = gentoo' > extra_overlay/metadata/layout.conf
 chown -R portage:portage extra_overlay
 # version bump with new ebuild script
+# repoman ebuild verification
 #repoman --digest=y -d full
