@@ -16,7 +16,7 @@ DESCRIPTION="Portage is the package management and distribution system for Gento
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:Portage"
 
 LICENSE="GPL-2"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sh ~sparc ~x86 ~amd64-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sh ~sparc ~x86"
 SLOT="0"
 IUSE="build doc epydoc gentoo-dev +ipc +native-extensions +rsync-verify selinux xattr"
 
@@ -102,6 +102,15 @@ pkg_setup() {
 
 python_prepare_all() {
 	distutils-r1_python_prepare_all
+
+	# Apply 0299aedef74e47c0a68acf7905d8714c9578f125 and
+	# 1ca5b822133171b131cef3dc15dc43583893ad6b for bug 698046.
+	sed -e 's|rsync -avP|rsync -LtvP|' -i lib/portage/tests/util/test_getconfig.py || die
+	sed -e 's|if os.stat(download_path).st_size == 0:|mystat = os.lstat(download_path)\n\t\t\t\t\t\tif mystat.st_size == 0 or (stat.S_ISLNK(mystat.st_mode) and not os.path.exists(download_path)):|' \
+		-i lib/portage/package/ebuild/fetch.py || die
+
+	# Apply 26fd7ffdd5b74af3aeedf0e6a87ac6b3d1243848 for bug 698474.
+	sed -e 's|if "local" in custommirrors:|if try_mirrors and "local" in custommirrors:|' -i lib/portage/package/ebuild/fetch.py || die
 
 	if use gentoo-dev; then
 		einfo "Disabling --dynamic-deps by default for gentoo-dev..."
