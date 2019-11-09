@@ -458,6 +458,7 @@ src_configure() {
 		$(use_with googledrive gdrive-client-secret ${google_default_client_secret})
 		$(use_with java)
 		$(use_with odk doxygen)
+		--enable-pch
 	)
 
 	if use eds || use gtk; then
