@@ -1,0 +1,35 @@
+diff -Naur opensips-3.0.1.orig/resolve.c opensips-3.0.1/resolve.c
+--- opensips-3.0.1.orig/resolve.c	2019-04-16 18:33:31.000000000 +0000
++++ opensips-3.0.1/resolve.c	2019-11-26 17:40:15.263303482 +0000
+@@ -50,6 +50,8 @@
+ #include "globals.h"
+ #include "blacklists.h"
+ 
++#define MAXHOSTNAMELEN 255
++
+ fetch_dns_cache_f *dnscache_fetch_func=NULL;
+ put_dns_cache_f *dnscache_put_func=NULL;
+ 
+diff -Naur opensips-3.0.1.orig/socket_info.c opensips-3.0.1/socket_info.c
+--- opensips-3.0.1.orig/socket_info.c	2019-10-01 15:16:11.000000000 +0000
++++ opensips-3.0.1/socket_info.c	2019-11-26 17:39:37.423704266 +0000
+@@ -61,7 +61,7 @@
+ 
+ #ifdef __OS_linux
+ #include <features.h>     /* for GLIBC version testing */
+-#if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 4)
++#if defined(__GLIBC_PREREQ)
+ #include <ifaddrs.h>
+ #define HAVE_IFADDRS
+ #endif
+diff -Naur opensips-3.0.1.orig/modules/mathops/math_funcs.c opensips-3.0.1/modules/mathops/math_funcs.c
+--- opensips-3.0.1.orig/modules/mathops/math_funcs.c	2019-10-01 15:16:06.000000000 +0000
++++ opensips-3.0.1/modules/mathops/math_funcs.c	2019-11-26 17:54:00.031100765 +0000
+@@ -39,6 +39,7 @@
+ 
+ #include <errno.h>
+ #include <ctype.h>
++#define _GNU_SOURCE 1
+ #include <math.h>
+ 
+ #include "../../pvar.h"
