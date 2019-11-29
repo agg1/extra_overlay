@@ -74,7 +74,7 @@ KEYWORDS="~alpha amd64 ~arm ~ppc ~ppc64 x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="+calendar +chatzilla +crypt +gmp-autoupdate +ipc jack minimal pulseaudio +roaming selinux test"
+IUSE="+calendar +chatzilla +gmp-autoupdate +ipc jack minimal pulseaudio +roaming selinux test"
 
 SRC_URI+="
 	https://dev.gentoo.org/~anarchy/mozilla/patchsets/${PATCHFF}.tar.xz
@@ -90,7 +90,6 @@ RDEPEND="
 	>=dev-libs/nss-3.28.3
 	>=dev-libs/nspr-4.13.1
 	jack? ( virtual/jack )
-	crypt? ( >=x11-plugins/enigmail-2.0.5 )
 "
 
 DEPEND="
