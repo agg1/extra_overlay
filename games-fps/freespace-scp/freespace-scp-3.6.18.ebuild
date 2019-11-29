@@ -13,12 +13,8 @@ IUSE=""
 
 RESTRICT="test"
 
-CFLAGS="${CFLAGS} -mcpu=core2 -march=core2 -mtune=core2"
-CXXFLAGS="${CXXFLAGS} -mcpu=core2 -march=core2 -mtune=core2"
-
 RDEPEND="media-libs/openal
 	dev-libs/jansson
-	dev-lang/lua
 	media-libs/libpng
 	sys-libs/zlib
 	media-libs/libjpeg-turbo
