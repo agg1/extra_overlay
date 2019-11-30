@@ -1,0 +1,190 @@
+diff -Naur netkit-routed-0.17.orig/ripquery/query.c netkit-routed-0.17/ripquery/query.c
+--- netkit-routed-0.17.orig/ripquery/query.c	1999-09-29 01:47:35.000000000 +0000
++++ netkit-routed-0.17/ripquery/query.c	2019-11-29 10:24:21.528000869 +0000
+@@ -50,7 +50,7 @@
+ #include <sys/time.h>
+ #include <signal.h>
+ #include <netinet/in.h>
+-#include <protocols/routed.h>
++#include "../routed.h"
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <errno.h>
+@@ -60,6 +60,8 @@
+ #include <string.h>
+ #include <getopt.h>
+ 
++#include <sys/types.h>
++
+ #define	WTIME	5		/* Time to wait for all responses */
+ #define	STIME	500000		/* usec to wait for another response */
+ 
+diff -Naur netkit-routed-0.17.orig/routed/defs.h netkit-routed-0.17/routed/defs.h
+--- netkit-routed-0.17.orig/routed/defs.h	1999-08-01 19:19:16.000000000 +0000
++++ netkit-routed-0.17/routed/defs.h	2019-11-29 10:22:38.752933198 +0000
+@@ -47,7 +47,7 @@
+ #include <sys/time.h>
+ #include <net/route.h>
+ #include <netinet/in.h>
+-#include <protocols/routed.h>
++#include "../routed.h"
+ #include <arpa/inet.h>
+ 
+ #include <netdb.h>
+@@ -92,6 +92,7 @@
+ 
+ void supply(struct sockaddr *, int, struct interface *, int);
+ 
++#define    __P(p) p
+ void addrouteforif __P((struct interface *));
+ void bumploglevel(void);
+ void dumppacket(FILE *, char *, struct sockaddr *, char *,int, struct timeval *);
+diff -Naur netkit-routed-0.17.orig/routed/inet.c netkit-routed-0.17/routed/inet.c
+--- netkit-routed-0.17.orig/routed/inet.c	1997-04-05 22:26:22.000000000 +0000
++++ netkit-routed-0.17/routed/inet.c	2019-11-29 10:23:59.544200936 +0000
+@@ -51,7 +51,7 @@
+ /*
+  * Formulate an Internet address from network + host.
+  */
+-struct in_addr inet_makeaddr(u_long net, u_long host)
++/*struct in_addr inet_makeaddr(u_long net, u_long host)
+ {
+ 	struct interface *ifp;
+ 	u_long mask;
+@@ -71,7 +71,7 @@
+ 	addr = net | (host & mask);
+ 	addr = htonl(addr);
+ 	return (*(struct in_addr *)&addr);
+-}
++}*/
+ #endif /* not glibc */
+ 
+ /*
+diff -Naur netkit-routed-0.17.orig/routed/main.c netkit-routed-0.17/routed/main.c
+--- netkit-routed-0.17.orig/routed/main.c	2019-11-29 10:25:00.705646324 +0000
++++ netkit-routed-0.17/routed/main.c	2019-11-29 10:22:55.797778072 +0000
+@@ -58,6 +58,7 @@
+ #include <assert.h>
+ #include <sys/utsname.h>
+ #include <time.h>
++#include <fcntl.h>
+ 
+ #define BUFSPACE (127*1024)	/* max. input buffer size to request */
+ 
+diff -Naur netkit-routed-0.17.orig/routed/startup.c netkit-routed-0.17/routed/startup.c
+--- netkit-routed-0.17.orig/routed/startup.c	1999-12-12 19:06:02.000000000 +0000
++++ netkit-routed-0.17/routed/startup.c	2019-11-29 10:23:33.685435269 +0000
+@@ -50,6 +50,8 @@
+ #include <errno.h>
+ #include "pathnames.h"
+ 
++#include <net/if.h>
++
+ struct	interface *ifnet;
+ struct	interface **ifnext = &ifnet;
+ int	lookforinterfaces = 1;
+diff -Naur netkit-routed-0.17.orig/routed.h netkit-routed-0.17/routed.h
+--- netkit-routed-0.17.orig/routed.h	1970-01-01 00:00:00.000000000 +0000
++++ netkit-routed-0.17/routed.h	2019-01-31 16:45:36.000000000 +0000
+@@ -0,0 +1,101 @@
++/*-
++ * Copyright (c) 1983, 1989, 1993
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 4. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	@(#)routed.h	8.1 (Berkeley) 6/2/93
++ */
++
++#ifndef _PROTOCOLS_ROUTED_H
++#define	_PROTOCOLS_ROUTED_H 1
++
++#include <sys/socket.h>
++/*
++ * Routing Information Protocol
++ *
++ * Derived from Xerox NS Routing Information Protocol
++ * by changing 32-bit net numbers to sockaddr's and
++ * padding stuff to 32-bit boundaries.
++ */
++#define	RIPVERSION	1
++
++struct netinfo {
++	struct	sockaddr rip_dst;	/* destination net/host */
++	int	rip_metric;		/* cost of route */
++};
++
++struct rip {
++	unsigned char	rip_cmd;		/* request/response */
++	unsigned char	rip_vers;		/* protocol version # */
++	unsigned char	rip_res1[2];		/* pad to 32-bit boundary */
++	union {
++		struct	netinfo ru_nets[1];	/* variable length... */
++		char	ru_tracefile[1];	/* ditto ... */
++	} ripun;
++#define	rip_nets	ripun.ru_nets
++#define	rip_tracefile	ripun.ru_tracefile
++};
++
++/*
++ * Packet types.
++ */
++#define	RIPCMD_REQUEST		1	/* want info */
++#define	RIPCMD_RESPONSE		2	/* responding to request */
++#define	RIPCMD_TRACEON		3	/* turn tracing on */
++#define	RIPCMD_TRACEOFF		4	/* turn it off */
++
++#define	RIPCMD_MAX		5
++#ifdef RIPCMDS
++char *ripcmds[RIPCMD_MAX] =
++  { "#0", "REQUEST", "RESPONSE", "TRACEON", "TRACEOFF" };
++#endif
++
++#define	HOPCNT_INFINITY		16	/* per Xerox NS */
++#define	MAXPACKETSIZE		512	/* max broadcast size */
++
++/*
++ * Timer values used in managing the routing table.
++ * Complete tables are broadcast every SUPPLY_INTERVAL seconds.
++ * If changes occur between updates, dynamic updates containing only changes
++ * may be sent.  When these are sent, a timer is set for a random value
++ * between MIN_WAITTIME and MAX_WAITTIME, and no additional dynamic updates
++ * are sent until the timer expires.
++ *
++ * Every update of a routing entry forces an entry's timer to be reset.
++ * After EXPIRE_TIME without updates, the entry is marked invalid,
++ * but held onto until GARBAGE_TIME so that others may
++ * see it "be deleted".
++ */
++#define	TIMER_RATE		30	/* alarm clocks every 30 seconds */
++
++#define	SUPPLY_INTERVAL		30	/* time to supply tables */
++#define	MIN_WAITTIME		2	/* min. interval to broadcast changes */
++#define	MAX_WAITTIME		5	/* max. time to delay changes */
++
++#define	EXPIRE_TIME		180	/* time to mark entry invalid */
++#define	GARBAGE_TIME		240	/* time to garbage collect */
++
++#endif /* protocols/routed.h */
