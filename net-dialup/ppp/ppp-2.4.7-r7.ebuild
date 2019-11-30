@@ -122,6 +122,9 @@ src_install() {
 	# Install pppd header files
 	emake -C pppd INSTROOT="${D}" install-devel
 
+	insinto /usr/include/net
+	doins include/net/ppp_defs.h
+
 	dosbin pppd/plugins/rp-pppoe/pppoe-discovery
 
 	dodir /etc/ppp/peers
