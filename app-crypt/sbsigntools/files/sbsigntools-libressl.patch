@@ -1,0 +1,12 @@
+diff -Naur sbsigntools-0.9.2.orig/src/sbverify.c sbsigntools-0.9.2/src/sbverify.c
+--- sbsigntools-0.9.2.orig/src/sbverify.c	2019-01-10 00:09:37.000000000 +0000
++++ sbsigntools-0.9.2/src/sbverify.c	2019-11-29 10:42:25.622797865 +0000
+@@ -67,6 +67,8 @@
+ #endif
+ #endif
+ 
++#define X509_get_extended_key_usage(cert) ((cert)->ex_xkusage)
++
+ static const char *toolname = "sbverify";
+ static const int cert_name_len = 160;
+ 
