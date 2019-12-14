@@ -11,15 +11,18 @@ SRC_URI="http://opensips.org/pub/opensips/${PV}/src/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~x86"
-IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence"
+KEYWORDS="~x86 ~amd64"
+IUSE="debug ipv6 mysql postgres radius jabber ssl libressl cpl unixodbc b2bua presence"
 
 RDEPEND="
 	mysql? ( >=dev-db/mysql-4.1.20 )
 	radius? ( >=net-dialup/radiusclient-ng-0.5.0 )
 	postgres? ( >=dev-db/postgresql-8.0.8 )
 	jabber? ( dev-libs/expat )
-	ssl? ( dev-libs/openssl )
+	ssl? (
+		libressl? ( dev-libs/libressl:0= )
+		!libressl? ( dev-libs/openssl:0= )
+	)
 	cpl? ( dev-libs/libxml2 )
 	b2bua? ( dev-libs/libxml2 )
 	presence? ( dev-libs/libxml2 )
