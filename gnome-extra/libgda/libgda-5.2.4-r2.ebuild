@@ -140,7 +140,7 @@ src_configure() {
 	fi
 
 	gnome2_src_configure \
-		--with-help \
+		--without-help \
 		--disable-default-binary \
 		--disable-static \
 		--enable-system-sqlite \
